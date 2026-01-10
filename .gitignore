@@ -1,0 +1,12 @@
+backend/node_modules
+frontend/node_modules
+admin/node_modules
+
+#Ingnore env 
+backend/.env
+frontend/.env
+admin/.env
+
+readme.md
+
+.DS_Store

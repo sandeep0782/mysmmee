@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap");
+
+@layer base {
+  :root {
+    /* Font */
+    --font-assistant: "Assistant", sans-serif;
+
+    /* Border radius */
+    --radius: 0.5rem;
+
+    /* Light theme colors */
+    --color-bg: #ffffff;
+    --color-text: #111827;
+    --color-primary: #ff3d6c;
+    --color-primary-hover: #e03662; /* manually darker shade */
+
+    --color-secondary: #6366f1;
+    --color-accent: #f59e0b;
+  }
+
+  /* Dark theme */
+  .dark {
+    --color-bg: #1f2937;
+    --color-text: #f9fafb;
+    --color-primary: #60a5fa;
+    --color-secondary: #818cf8;
+    --color-accent: #fbbf24;
+  }
+
+  body {
+    font-family: var(--font-assistant);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}
