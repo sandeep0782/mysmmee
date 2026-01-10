@@ -93,7 +93,7 @@ export default function SellerProductsPage() {
             />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Category: {product.category}</p>
+                  <p className="text-sm text-gray-600">Category: {product.category.name}</p>
                   <p className="text-sm text-gray-600">Class: {product.classType}</p>
                   <div className="flex justify-between items-center">
                     <Badge variant="secondary" className="bg-purple-100 text-purple-800">

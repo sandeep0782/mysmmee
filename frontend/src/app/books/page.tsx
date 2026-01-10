@@ -89,13 +89,15 @@ export default function BooksPage() {
 
     const categoryMatch =
       selectedCategory.length === 0 ||
-      selectedCategory.map(cat => cat.toLowerCase()).includes(book.category.toLowerCase());
+      selectedCategory
+        .map(cat => cat.toLowerCase())
+        .includes(book.category.name.toLowerCase());
 
     const searchMatch = searchTerm
       ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
       book.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.category.toLowerCase().includes(searchTerm.toLowerCase())
+      book.category.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     return conditionMatch && typeMatch && categoryMatch && searchMatch;
@@ -171,30 +173,33 @@ export default function BooksPage() {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="mt-2 space-y-2">
-                      {values.map((value) => (
-                        <div
-                          key={value}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={value}
-                            checked={
-                              key === "condition"
-                                ? selectedCondition.includes(value)
-                                : key === "classType"
-                                  ? selectedType.includes(value)
-                                  : selectedCategory.includes(value)
-                            }
-                            onCheckedChange={() => toggleFilter(key, value)}
-                          />
-                          <label
-                            htmlFor={value}
-                            className="text-sm font-medium leading-none"
-                          >
-                            {value}
-                          </label>
-                        </div>
-                      ))}
+                      {values.map((value) => {
+                        const displayName =
+                          typeof value === "string" ? value : "name" in value ? value.name : "";
+
+                        return (
+                          <div key={typeof value === "string" ? value : "id" in value ? value.id : value._id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={typeof value === "string" ? value : "name" in value ? value.name : ""}
+                              checked={
+                                key === "condition"
+                                  ? selectedCondition.includes(displayName)
+                                  : key === "classType"
+                                    ? selectedType.includes(displayName)
+                                    : selectedCategory.includes(displayName)
+                              }
+                              onCheckedChange={() => toggleFilter(key, displayName)}
+                            />
+                            <label
+                              htmlFor={typeof value === "string" ? value : "name" in value ? value.name : ""}
+                              className="text-sm font-medium leading-none"
+                            >
+                              {displayName}
+                            </label>
+                          </div>
+                        );
+                      })}
+
                     </div>
                   </AccordionContent>
                 </AccordionItem>

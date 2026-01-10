@@ -56,13 +56,13 @@ export default function BookDetailsPage() {
   const [removeFromWishlist] = useRemoveFromWishlistMutation();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-      const user = useSelector((state: RootState) => state.user.user);
-  
-      useEffect(() =>{
-        if(user && user.role !== "user"){
-          router.push('/admin')
-        }
-      },[user,router])
+  const user = useSelector((state: RootState) => state.user.user);
+
+  useEffect(() => {
+    if (user && user.role !== "user") {
+      router.push('/admin')
+    }
+  }, [user, router])
 
   useEffect(() => {
     if (apiResponse?.success) {
@@ -168,7 +168,7 @@ export default function BookDetailsPage() {
             Books
           </Link>
           <span>/</span>
-          <p className="text-gray-600">{book.category}</p>
+          <p className="text-gray-600">{book.category.toString()}</p>
           <span>/</span>
           <span className="text-gray-600">{book.title}</span>
         </nav>
@@ -195,11 +195,10 @@ export default function BookDetailsPage() {
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border transition-all duration-200 ${
-                    selectedImage === index
-                      ? "ring-2 ring-primary scale-105"
-                      : "hover:scale-105"
-                  }`}
+                  className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border transition-all duration-200 ${selectedImage === index
+                    ? "ring-2 ring-primary scale-105"
+                    : "hover:scale-105"
+                    }`}
                 >
                   <Image
                     src={image}
@@ -233,11 +232,10 @@ export default function BookDetailsPage() {
                   onClick={() => toggleWishlist(book._id)}
                 >
                   <Heart
-                    className={`h-4 w-4 mr-1 ${
-                      wishlist.some((w) => w.products.includes(book._id))
-                        ? "fill-red-500"
-                        : ""
-                    }`}
+                    className={`h-4 w-4 mr-1 ${wishlist.some((w) => w.products.includes(book._id))
+                      ? "fill-red-500"
+                      : ""
+                      }`}
                   />
                   <span className="hidden md:inline">
                     {wishlist.some((w) => w.products.includes(book._id))
@@ -297,7 +295,7 @@ export default function BookDetailsPage() {
                     <div className="font-medium text-muted-foreground">
                       Category
                     </div>
-                    <div>{book?.category}</div>
+                    <div>{book?.category.toString()}</div>
                     <div className="font-medium text-muted-foreground">
                       Author
                     </div>
