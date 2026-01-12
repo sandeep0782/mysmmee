@@ -39,7 +39,7 @@ const Products = () => {
     const [products, setProducts] = useState<BookDetails[]>([])
     const wishlist = useSelector((state: RootState) => state.wishlist.items)
     const searchTerms = new URLSearchParams(window.location.search).get('search') || ''
-    const productPerPage = 20
+    const productPerPage = 40
 
     const [addingProductId, setAddingProductId] = useState<string | null>(null);
     const [addedProductIds, setAddedProductIds] = useState<Set<string>>(new Set());
