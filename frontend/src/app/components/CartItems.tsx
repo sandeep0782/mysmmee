@@ -20,7 +20,7 @@ export const CartItems: React.FC<CartItemsProps> = ({ items, onRemoveItem, onTog
           key={item._id}
           className="flex flex-col md:flex-row gap-4 py-4 border-b last:border-0"
         >
-          <Link href={`/books/${item.product._id}`}>
+          <Link href={`/products/${item.product._id}`}>
             <Image
               src={item?.product?.images?.[0] || "/placeholder.png"}
               alt={item?.product?.title || "Product Image"}
