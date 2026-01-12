@@ -287,7 +287,7 @@ const Products = () => {
                                                         <div className="p-4">
 
                                                             <div className="flex items-start justify-between">
-                                                                <h3 className="text-lg font-semibold text-black line-clamp-1">{product.title}</h3>
+                                                                <h3 className="text-lg font-semibold text-black line-clamp-1">{product.brand.name}</h3>
                                                                 <span>{product.color?.name}</span>
                                                             </div>
                                                             <p className="text-sm text-zinc-400 line-clamp-1">{product.description}</p>
