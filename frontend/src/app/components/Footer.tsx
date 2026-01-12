@@ -195,7 +195,7 @@ export default function Footer() {
             Local.
           </p> */}
           <p className="mb-2">
-            Registered Office Address: Shankar Vihar, New Palam VIhar, Sector-110, Gurugram-Haryana-122001 ,
+            Registered Office Address: Shankar Vihar, New Palam Vihar, Sector-110, Gurugram-Haryana-122001 ,
             India
           </p>
           <p className="mb-2">CIN: UNDERCOMPANYCREATION235356 | Phone: +91-9650070010</p>

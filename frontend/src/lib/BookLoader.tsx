@@ -30,7 +30,7 @@ export default function BookLoader() {
 
         {/* Loading Text */}
         <p className="text-xl font-semibold text-gray-800">
-          Loading Books...
+          Loading Products...
         </p>
         <p className="text-sm text-gray-600">
           Your next favorite read is on its way!
