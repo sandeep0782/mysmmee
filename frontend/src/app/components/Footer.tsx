@@ -195,11 +195,10 @@ export default function Footer() {
             Local.
           </p> */}
           <p className="mb-2">
-            Registered Office Address: Awfis Soul Space Paradigm 1st Floor of B
-            wing, Property Marathahalli Outer Ring Road, Bengaluru-560037 ,
+            Registered Office Address: Shankar Vihar, New Palam VIhar, Sector-110, Gurugram-Haryana-122001 ,
             India
           </p>
-          <p className="mb-2">CIN: U72300KA2007PTC041799 | Phone: +91-80-61561999</p>
+          <p className="mb-2">CIN: UNDERCOMPANYCREATION235356 | Phone: +91-9650070010</p>
         </div>
 
 
