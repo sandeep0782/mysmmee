@@ -1,0 +1,28 @@
+name: Production Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Auto-Update
+        uses: appleboy/ssh-action@master
+        with:
+          host: 72.61.115.113
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/mysmmee
+            git pull origin main
+
+            # Update Admin
+            cd admin && npm install && npm run build && pm2 restart project-admin
+
+            # Update Frontend
+            cd ../frontend && npm install && npm run build && pm2 restart project-frontend
+
+            # Update Backend
+            cd ../backend && npm install && pm2 restart project-backend

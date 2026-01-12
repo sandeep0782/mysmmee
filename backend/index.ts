@@ -44,6 +44,12 @@ connectDB();
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
+// Test API route
+// Add this **before your API routes**:
+app.get("/", (req, res) => {
+  res.send("Welcome to MYSMME backend! API is live ✅");
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
@@ -69,3 +75,6 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
+
+// pm2 start index.ts --name project-backend --interpreter node --node-args="-r ts-node/register"
