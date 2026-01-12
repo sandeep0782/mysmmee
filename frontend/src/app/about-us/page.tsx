@@ -8,8 +8,7 @@ const AboutUs = () => {
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-8">About Us</h1>
         <p className="text-gray-600 text-lg text-center mb-12">
-          Welcome to BookKart, your ultimate destination for buying and selling
-          used books online.
+          Welcome to MYSMME, your ultimate destination for online Shopping Solution.
         </p>
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -21,9 +20,8 @@ const AboutUs = () => {
               Our Mission
             </h2>
             <p className="text-gray-600 text-center">
-              At BookKart, we aim to make reading accessible to everyone by
-              providing a platform where people can buy and sell their old books
-              easily.
+              At MYSMME, we aim to make fashion accessible to everyone by
+              providing a platform where people can buy fashion items online easily.
             </p>
           </div>
 
@@ -35,8 +33,8 @@ const AboutUs = () => {
               Our Community
             </h2>
             <p className="text-gray-600 text-center">
-              We believe in building a community of book lovers who can share
-              their passion for reading while promoting eco-friendly practices.
+              We believe in building a community of Fashion lovers who can share
+              their passion for fashion while promoting eco-friendly practices.
             </p>
           </div>
 
@@ -57,7 +55,7 @@ const AboutUs = () => {
         {/* Why Choose Us Section */}
         <section className="py-16 bg-white">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Why Choose BookKart?
+            Why Choose MYSMME?
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
             <div className="bg-gray-100 rounded-lg p-6 shadow-lg transition-transform transform hover:scale-105">
@@ -65,10 +63,10 @@ const AboutUs = () => {
                 <span className="text-primary text-4xl">📚</span>
               </div>
               <h3 className="font-semibold text-lg text-center mb-2">
-                Wide Selection
+                Wide Range of Products
               </h3>
               <p className="text-gray-600 text-center">
-                Thousands of used books available at your fingertips.
+                Thousands of new fashion products available at your fingertips.
               </p>
             </div>
 
@@ -80,7 +78,7 @@ const AboutUs = () => {
                 Easy Listing
               </h3>
               <p className="text-gray-600 text-center">
-                Sell your old books in just a few clicks.
+                Sell your brand's products in just a few clicks.
               </p>
             </div>
 
@@ -104,7 +102,7 @@ const AboutUs = () => {
                 Community Driven
               </h3>
               <p className="text-gray-600 text-center">
-                Join a community of readers and sellers who share your passion.
+                Join a community of fashion creator who lives for fashion.
               </p>
             </div>
           </div>
@@ -127,8 +125,8 @@ const AboutUs = () => {
           Join Us Today!
         </h2>
         <p className="text-gray-600 text-lg text-center mb-8">
-          Sign up now to start buying and selling your favorite books on
-          BookKart!
+          Sign up now to start selling your brand's product on
+          MYSMME!
         </p>
 
         <div className="flex justify-center">
