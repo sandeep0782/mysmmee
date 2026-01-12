@@ -244,15 +244,13 @@ const PrivacyPolicyPage = () => {
       <section className="mb-8">
         <h2 className="mb-4 text-xl font-semibold">14. Grievance Officer</h2>
         <p className="mb-4">
-          <strong>Name:</strong> Mr. Arshwaal Singh
+          <strong>Name:</strong> Mr. Krishan Chander
           <br />
           <strong>Designation:</strong> Manager – Customer Experience
           <br />
           <strong>Company:</strong> Krishna Technologies Private Limited
           <br />
-          <strong>Address:</strong> Awfis Soul Space Paradigm 1st Floor of B
-          wing, Property Marathahalli Outer Ring Road, Bengaluru-560037,
-          Karnataka India
+          <strong>Address:</strong> hankar Vihar, New Palam VIhar, Sector-110, Gurugram-Haryana-122001 , India
           <br />
           <strong>Email:</strong> grievance@mysmme.com
           <br />
