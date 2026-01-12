@@ -35,10 +35,11 @@ interface ProductForm {
     images: File[];
 }
 
-interface AddProductPageProps {
-    productId?: string; // optional, if defined → edit mode
-}
-
+// interface PageProps {
+//     params: {
+//         id: string;
+//     };
+// }
 const initialFormState: ProductForm = {
     title: "",
     slug: "",
@@ -64,7 +65,9 @@ const initialFormState: ProductForm = {
     images: []
 };
 
-const AddProductPage: React.FC<AddProductPageProps> = ({ productId }) => {
+const AddProductPage = ({ params }: { params: any }) => {
+    const productId = params.id as string;
+
     const [form, setForm] = useState<ProductForm>(initialFormState);
     const [categories, setCategories] = useState<SelectOption[]>([]);
     const [brands, setBrands] = useState<SelectOption[]>([]);
