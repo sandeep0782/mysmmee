@@ -8,15 +8,13 @@ import {
 import { response } from "../utils/responseHandler";
 import { generateToken } from "../utils/generateToken";
 
-// Use environment variable to check if we are in production
-const isProd = process.env.NODE_ENV === "production";
-
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, agreeTerms } = req.body;
-
     const existingUser = await User.findOne({ email });
-    if (existingUser) return response(res, 400, "User already exists");
+    if (existingUser) {
+      return response(res, 400, "User already exists");
+    }
 
     const verificationToken = crypto.randomBytes(20).toString("hex");
     const user = new User({
@@ -26,9 +24,14 @@ export const register = async (req: Request, res: Response) => {
       agreeTerms,
       verificationToken,
     });
+
     await user.save();
 
-    await sendVerificationEmail(user.email, verificationToken, user.name);
+    const result = await sendVerificationEmail(
+      user.email,
+      verificationToken,
+      user.name
+    );
 
     return response(
       res,
@@ -36,7 +39,7 @@ export const register = async (req: Request, res: Response) => {
       "Registration successful. Please check your email to verify your account."
     );
   } catch (error) {
-    console.error("Register Error:", error);
+    console.log(error);
     return response(
       res,
       500,
@@ -49,8 +52,9 @@ export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     const user = await User.findOne({ verificationToken: token });
-    if (!user)
+    if (!user) {
       return response(res, 400, "Invalid or expired verification token");
+    }
 
     user.isVerified = true;
     user.verificationToken = undefined;
@@ -59,8 +63,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      secure: isProd,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     await user.save();
@@ -71,7 +75,6 @@ export const verifyEmail = async (req: Request, res: Response) => {
       "Email verified successfully. You can now log in to your account."
     );
   } catch (error) {
-    console.error("Verify Email Error:", error);
     return response(
       res,
       500,
@@ -85,8 +88,11 @@ export const login = async (req: Request, res: Response) => {
     const { email, password, rememberMe } = req.body;
     const user = (await User.findOne({ email })) as IUser;
 
-    if (!user) return response(res, 401, "Invalid email or password");
+    if (!user) {
+      return response(res, 401, "Invalid email or password");
+    }
 
+    // Check if account is locked
     if (user.lockUntil && user.lockUntil > new Date()) {
       return response(
         res,
@@ -96,10 +102,13 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const isMatch = await user.comparePassword(password);
+
     if (!isMatch) {
       user.loginAttempts = (user.loginAttempts || 0) + 1;
+
+      // Lock account after 5 failed attempts
       if (user.loginAttempts >= 5) {
-        user.lockUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+        user.lockUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes lock
         await user.save();
         return response(
           res,
@@ -107,23 +116,29 @@ export const login = async (req: Request, res: Response) => {
           "Account locked due to too many failed login attempts. Try again in 30 minutes."
         );
       }
+
       await user.save();
       return response(res, 401, "Invalid email or password");
     }
 
-    // Reset login attempts
+    // Reset attempts on successful login
     user.loginAttempts = 0;
     user.lockUntil = undefined;
     await user.save();
 
-    if (!user.isVerified)
-      return response(res, 401, "Please verify your email before logging in.");
+    if (!user.isVerified) {
+      return response(
+        res,
+        401,
+        "Please verify your email before logging in. Check your inbox for the verification link."
+      );
+    }
 
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       sameSite: "lax",
-      secure: isProd,
+      secure: false,
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
     });
 
@@ -136,7 +151,6 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Login Error:", error);
     return response(
       res,
       500,
@@ -145,227 +159,14 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user)
-      return response(res, 404, "No account found with this email address");
-
-    const resetToken = crypto.randomBytes(20).toString("hex");
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
-    await user.save();
-
-    await sendPasswordResetEmail(user.email, resetToken, user.name);
-
-    return response(
-      res,
-      200,
-      "A password reset link has been sent to your email address"
-    );
-  } catch (error) {
-    console.error("Forgot Password Error:", error);
-    return response(
-      res,
-      500,
-      "An error occurred while processing your request. Please try again."
-    );
-  }
-};
-
-export const resetPassword = async (req: Request, res: Response) => {
-  try {
-    const { token } = req.params;
-    const { newPassword } = req.body;
-
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
-
-    if (!user)
-      return response(res, 400, "Invalid or expired password reset token");
-
-    user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    return response(res, 200, "Password has been successfully reset.");
-  } catch (error) {
-    console.error("Reset Password Error:", error);
-    return response(
-      res,
-      500,
-      "An error occurred while resetting your password. Please try again."
-    );
-  }
-};
-
-export const logout = async (_: Request, res: Response) => {
-  try {
-    res.clearCookie("access_token", {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: isProd,
-    });
-    return response(res, 200, "Successfully logged out.");
-  } catch (error) {
-    console.error("Logout Error:", error);
-    return response(
-      res,
-      500,
-      "An error occurred while logging out. Please try again."
-    );
-  }
-};
-
-export const checkUserAuth = async (req: Request, res: Response) => {
-  try {
-    const userId = req?.id;
-    if (!userId)
-      return response(res, 400, "Unauthenticated! Please login first.");
-
-    const user = await User.findById(userId).select(
-      "-password -verificationToken -resetPasswordToken -resetPasswordExpires"
-    );
-    if (!user) return response(res, 403, "User not found");
-
-    return response(res, 200, "User authenticated", user);
-  } catch (error) {
-    console.error("Check Auth Error:", error);
-    return response(res, 500, "Internal server error", error);
-  }
-};
-
-// import { Request, Response } from "express";
-// import User, { IUser } from "../models/User";
-// import crypto from "crypto";
-// import {
-//   sendVerificationEmail,
-//   sendPasswordResetEmail,
-// } from "../config/emailConfig";
-// import { response } from "../utils/responseHandler";
-// import { generateToken } from "../utils/generateToken";
-
-// export const register = async (req: Request, res: Response) => {
-//   try {
-//     const { name, email, password, agreeTerms } = req.body;
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return response(res, 400, "User already exists");
-//     }
-
-//     const verificationToken = crypto.randomBytes(20).toString("hex");
-//     const user = new User({
-//       name,
-//       email,
-//       password,
-//       agreeTerms,
-//       verificationToken,
-//     });
-
-//     await user.save();
-
-//     const result = await sendVerificationEmail(
-//       user.email,
-//       verificationToken,
-//       user.name
-//     );
-
-//     return response(
-//       res,
-//       201,
-//       "Registration successful. Please check your email to verify your account."
-//     );
-//   } catch (error) {
-//     console.log(error);
-//     return response(
-//       res,
-//       500,
-//       "An error occurred during registration. Please try again."
-//     );
-//   }
-// };
-
-// export const verifyEmail = async (req: Request, res: Response) => {
-//   try {
-//     const { token } = req.params;
-//     const user = await User.findOne({ verificationToken: token });
-//     if (!user) {
-//       return response(res, 400, "Invalid or expired verification token");
-//     }
-
-//     user.isVerified = true;
-//     user.verificationToken = undefined;
-
-//     const accessToken = generateToken(user);
-//     res.cookie("access_token", accessToken, {
-//       httpOnly: true,
-//       sameSite: "lax",
-//       secure: false,
-//       maxAge: 24 * 60 * 60 * 1000,
-//     });
-
-//     await user.save();
-
-//     return response(
-//       res,
-//       200,
-//       "Email verified successfully. You can now log in to your account."
-//     );
-//   } catch (error) {
-//     return response(
-//       res,
-//       500,
-//       "An error occurred while verifying your email. Please try again."
-//     );
-//   }
-// };
-
 // export const login = async (req: Request, res: Response) => {
 //   try {
 //     const { email, password, rememberMe } = req.body;
 //     const user = (await User.findOne({ email })) as IUser;
 
-//     if (!user) {
+//     if (!user || !(await user.comparePassword(password))) {
 //       return response(res, 401, "Invalid email or password");
 //     }
-
-//     // Check if account is locked
-//     if (user.lockUntil && user.lockUntil > new Date()) {
-//       return response(
-//         res,
-//         403,
-//         `Account locked. Try again after ${user.lockUntil.toLocaleTimeString()}`
-//       );
-//     }
-
-//     const isMatch = await user.comparePassword(password);
-
-//     if (!isMatch) {
-//       user.loginAttempts = (user.loginAttempts || 0) + 1;
-
-//       // Lock account after 5 failed attempts
-//       if (user.loginAttempts >= 5) {
-//         user.lockUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes lock
-//         await user.save();
-//         return response(
-//           res,
-//           403,
-//           "Account locked due to too many failed login attempts. Try again in 30 minutes."
-//         );
-//       }
-
-//       await user.save();
-//       return response(res, 401, "Invalid email or password");
-//     }
-
-//     // Reset attempts on successful login
-//     user.loginAttempts = 0;
-//     user.lockUntil = undefined;
-//     await user.save();
 
 //     if (!user.isVerified) {
 //       return response(
@@ -374,13 +175,17 @@ export const checkUserAuth = async (req: Request, res: Response) => {
 //         "Please verify your email before logging in. Check your inbox for the verification link."
 //       );
 //     }
-
+//     // Use the generateToken function
 //     const accessToken = generateToken(user);
+//     // Set the token in the cookie
 //     res.cookie("access_token", accessToken, {
 //       httpOnly: true,
 //       sameSite: "lax",
 //       secure: false,
-//       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
+//       // maxAge: 24 * 60 * 60 * 1000,
+//       maxAge: rememberMe
+//         ? 30 * 24 * 60 * 60 * 1000 // 30 days
+//         : undefined, // session cookie
 //     });
 
 //     return response(res, 200, "Login successful", {
@@ -400,156 +205,110 @@ export const checkUserAuth = async (req: Request, res: Response) => {
 //   }
 // };
 
-// // export const login = async (req: Request, res: Response) => {
-// //   try {
-// //     const { email, password, rememberMe } = req.body;
-// //     const user = (await User.findOne({ email })) as IUser;
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return response(res, 404, "No account found with this email address");
+    }
 
-// //     if (!user || !(await user.comparePassword(password))) {
-// //       return response(res, 401, "Invalid email or password");
-// //     }
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+    await user.save();
 
-// //     if (!user.isVerified) {
-// //       return response(
-// //         res,
-// //         401,
-// //         "Please verify your email before logging in. Check your inbox for the verification link."
-// //       );
-// //     }
-// //     // Use the generateToken function
-// //     const accessToken = generateToken(user);
-// //     // Set the token in the cookie
-// //     res.cookie("access_token", accessToken, {
-// //       httpOnly: true,
-// //       sameSite: "lax",
-// //       secure: false,
-// //       // maxAge: 24 * 60 * 60 * 1000,
-// //       maxAge: rememberMe
-// //         ? 30 * 24 * 60 * 60 * 1000 // 30 days
-// //         : undefined, // session cookie
-// //     });
+    await sendPasswordResetEmail(user.email, resetToken, user.name);
 
-// //     return response(res, 200, "Login successful", {
-// //       user: {
-// //         id: user._id,
-// //         name: user.name,
-// //         email: user.email,
-// //         role: user.role,
-// //       },
-// //     });
-// //   } catch (error) {
-// //     return response(
-// //       res,
-// //       500,
-// //       "An error occurred during login. Please try again."
-// //     );
-// //   }
-// // };
+    return response(
+      res,
+      200,
+      "A password reset link has been sent to your email address"
+    );
+  } catch (error) {
+    console.log(error);
+    return response(
+      res,
+      500,
+      "An error occurred while processing your request. Please try again."
+    );
+  }
+};
 
-// export const forgotPassword = async (req: Request, res: Response) => {
-//   try {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return response(res, 404, "No account found with this email address");
-//     }
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
 
-//     const resetToken = crypto.randomBytes(20).toString("hex");
-//     user.resetPasswordToken = resetToken;
-//     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
-//     await user.save();
+    if (!user) {
+      return response(res, 400, "Invalid or expired password reset token");
+    }
 
-//     await sendPasswordResetEmail(user.email, resetToken, user.name);
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
 
-//     return response(
-//       res,
-//       200,
-//       "A password reset link has been sent to your email address"
-//     );
-//   } catch (error) {
-//     console.log(error);
-//     return response(
-//       res,
-//       500,
-//       "An error occurred while processing your request. Please try again."
-//     );
-//   }
-// };
+    return response(
+      res,
+      200,
+      "Your password has been successfully reset. You can now log in with your new password."
+    );
+  } catch (error) {
+    return response(
+      res,
+      500,
+      "An error occurred while resetting your password. Please try again."
+    );
+  }
+};
 
-// export const resetPassword = async (req: Request, res: Response) => {
-//   try {
-//     const { token } = req.params;
-//     const { newPassword } = req.body;
-//     const user = await User.findOne({
-//       resetPasswordToken: token,
-//       resetPasswordExpires: { $gt: Date.now() },
-//     });
+export const logout = async (_: Request, res: Response) => {
+  try {
+    // Clear the access token cookie
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+    });
+    return response(res, 200, "Successfully logged out.");
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return response(
+      res,
+      500,
+      "An error occurred while processing your request. Please try again."
+    );
+  }
+};
 
-//     if (!user) {
-//       return response(res, 400, "Invalid or expired password reset token");
-//     }
-
-//     user.password = newPassword;
-//     user.resetPasswordToken = undefined;
-//     user.resetPasswordExpires = undefined;
-//     await user.save();
-
-//     return response(
-//       res,
-//       200,
-//       "Your password has been successfully reset. You can now log in with your new password."
-//     );
-//   } catch (error) {
-//     return response(
-//       res,
-//       500,
-//       "An error occurred while resetting your password. Please try again."
-//     );
-//   }
-// };
-
-// export const logout = async (_: Request, res: Response) => {
-//   try {
-//     // Clear the access token cookie
-//     res.clearCookie("access_token", {
-//       httpOnly: true,
-//       sameSite: "lax",
-//       secure: false,
-//     });
-//     return response(res, 200, "Successfully logged out.");
-//   } catch (error) {
-//     console.error("Logout Error:", error);
-//     return response(
-//       res,
-//       500,
-//       "An error occurred while processing your request. Please try again."
-//     );
-//   }
-// };
-
-// export const checkUserAuth = async (req: Request, res: Response) => {
-//   try {
-//     const userId = req?.id;
-//     if (!userId) {
-//       return response(
-//         res,
-//         400,
-//         "Unauthenticated! Please login before accessing the data"
-//       );
-//     }
-//     const user = await User.findById(userId).select(
-//       "-password -verificationToken -resetPasswordToken -resetPasswordExpires"
-//     );
-//     if (!user) {
-//       return response(res, 403, "User not found");
-//     }
-//     return response(
-//       res,
-//       201,
-//       "User retrieved and allowed to use bookkart",
-//       user
-//     );
-//   } catch (error) {
-//     return response(res, 500, "Internal server error", error);
-//   }
-// };
+export const checkUserAuth = async (req: Request, res: Response) => {
+  try {
+    const userId = req?.id;
+    if (!userId) {
+      return response(
+        res,
+        400,
+        "Unauthenticated! Please login before accessing the data"
+      );
+    }
+    const user = await User.findById(userId).select(
+      "-password -verificationToken -resetPasswordToken -resetPasswordExpires"
+    );
+    if (!user) {
+      return response(res, 403, "User not found");
+    }
+    return response(
+      res,
+      201,
+      "User retrieved and allowed to use bookkart",
+      user
+    );
+  } catch (error) {
+    return response(res, 500, "Internal server error", error);
+  }
+};
