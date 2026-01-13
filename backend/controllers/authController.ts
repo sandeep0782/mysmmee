@@ -62,8 +62,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "none", // needed for cross-site (frontend and backend on different domains)
-      secure: true, // HTTPS only
+      sameSite: "lax", // needed for cross-site (frontend and backend on different domains)
+      secure: false, // HTTPS only
       domain: ".mysmme.com", // your domain
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
@@ -138,8 +138,8 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      sameSite: "lax",
+      secure: false,
       domain: ".mysmme.com",
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
     });
@@ -274,8 +274,8 @@ export const logout = async (_: Request, res: Response) => {
     // Clear the access token cookie
     res.clearCookie("access_token", {
       httpOnly: true,
-      sameSite: "none", // must match the login cookie
-      secure: true, // must match the login cookie
+      sameSite: "lax", // must match the login cookie
+      secure: false, // must match the login cookie
       domain: ".mysmme.com", // must match the login cookie
     });
     return response(res, 200, "Successfully logged out.");

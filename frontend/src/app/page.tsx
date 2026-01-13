@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import ShopByCategory from "./Homepage/ShopByCategory";
+import ShopByBrands from "./Homepage/ShopByBrands";
 
 // Define banner type
 interface Banner {
@@ -108,6 +109,10 @@ export default function Homepage() {
           </div>
         </section>
       )}
+
+
+      {/* shop By Category Section */}
+      <ShopByBrands />
 
       {/* Newly Added Books Section */}
       <NewBooks />

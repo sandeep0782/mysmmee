@@ -11,7 +11,7 @@ const nextConfig = {
       "images.unsplash.com",
       "media.istockphoto.com",
       "modelink.s3.eu-north-1.amazonaws.com",
-      'modelink.s3.eu-north-1.amazonaws.com',
+      "www.facebook.com", // only the hostname, no https:// or wildcards
     ],
   },
 };

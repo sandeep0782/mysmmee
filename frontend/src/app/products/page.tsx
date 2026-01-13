@@ -150,7 +150,7 @@ const Products = () => {
                     throw new Error(result.message || 'Failed to remove from Wishlist');
                 }
             } else {
-                const result = await addToWishlist( productId ).unwrap();
+                const result = await addToWishlist(productId).unwrap();
                 if (result.success) {
                     dispatch(addToWishlistAction(result.data));
                     toast.success(result.message || "Added to Wishlist successfully");

@@ -61,7 +61,7 @@ const ShopByCategory = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-red-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-12 uppercase tracking-widest">
           Shop by <span className="text-primary">Category</span>

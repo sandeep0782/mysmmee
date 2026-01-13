@@ -10,3 +10,6 @@ admin/.env
 readme.md
 
 .DS_Store
+
+# controller blocker to push as local and live issue
+src/controllers/AuthController.ts
