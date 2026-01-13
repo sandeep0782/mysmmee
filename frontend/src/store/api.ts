@@ -16,13 +16,13 @@ const API_URLS = {
     `${BASE_URL}/users/profile/update/${userId}`,
 
   // Product related URLs
-  BRANDS: `${BASE_URL}/brands`,
-  CATEGORIES: `${BASE_URL}/categories`,
-  COLORS: `${BASE_URL}/colors`,
-  SEASONS: `${BASE_URL}/season`,
+  BRANDS: `${BASE_URL}/api/brands`,
+  CATEGORIES: `${BASE_URL}/api/categories`,
+  COLORS: `${BASE_URL}/api/colors`,
+  SEASONS: `${BASE_URL}/api/season`,
 
   // Product related URLs
-  PRODUCTS: `${BASE_URL}/products`,
+  PRODUCTS: `${BASE_URL}/api/products`,
   PRODUCT_BY_ID: (id: string) => `${BASE_URL}/products/${id}`,
   PRODUCT_BY_SLUG: (slug: string) => `${BASE_URL}/products/slug/${slug}`,
   GET_PRODUCT_BY_SELLERID: (sellerId: string) =>
