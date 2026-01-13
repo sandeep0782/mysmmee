@@ -15,7 +15,7 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
   const token = req.cookies.access_token;
   
   if (!token) {
-    return response(res, 401, 'Not authorized, no token');
+    return response(res, 401, 'Not authorized');
   }
 
   try {
@@ -24,7 +24,7 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
     if (!decoded) {
       return response(res, 401, 'Not authorized, user not found');
     }
-
+    
     req.id = decoded.userId;
     req.role= decoded.role;
     next();

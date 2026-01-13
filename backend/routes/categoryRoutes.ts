@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/", authenticateUser, CategoryController.createCategory);
 
-router.get("/", authenticateUser, CategoryController.getAllCategories);
+router.get("/", CategoryController.getAllCategories);
 
 router.get("/:id", authenticateUser, CategoryController.getCategoryById);
 
