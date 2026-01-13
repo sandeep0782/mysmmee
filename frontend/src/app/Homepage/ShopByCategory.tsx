@@ -61,12 +61,12 @@ const ShopByCategory = () => {
                                                     >
                                                         <Link href={`/products/${product.slug || product._id}`} className="flex flex-col items-center justify-center">
                                                             <div className="relative w-24 h-24 mb-3">
-                                                                <Image
+                                                                {/* <Image
                                                                     src={product.images[0] || "/placeholder.png"}
                                                                     alt={product.title}
                                                                     fill
                                                                     className="object-cover rounded-full"
-                                                                />
+                                                                /> */}
                                                             </div>
                                                             <h3 className="text-center text-sm font-medium line-clamp-2">{product.title}</h3>
                                                         </Link>
