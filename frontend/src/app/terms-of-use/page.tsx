@@ -4,7 +4,7 @@ const TermsOfUsePage = () => {
   return (
     <div className="container text-sm max-w-4xl mx-auto px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">
-        Terms of Use – MYSMME MYNTRA
+        Terms of Use – MYSMME
       </h1>
 
       <p className="mb-6">
@@ -28,7 +28,7 @@ const TermsOfUsePage = () => {
           thereunder.
         </p>
         <p className="mb-4">
-          The Platform is operated by MYSMME MYNTRA Private Limited (“MYSMME”,
+          The Platform is operated by MYSMME Private Limited (“MYSMME”,
           “we”, “us”, “our”). By accessing or using the Platform, you agree to be
           bound by these Terms.
         </p>
