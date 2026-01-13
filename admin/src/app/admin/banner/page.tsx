@@ -38,7 +38,7 @@ const BannerPage: React.FC = () => {
     const fetchBanners = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/banners", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -68,8 +68,8 @@ const BannerPage: React.FC = () => {
             setFormLoading(true);
 
             const url = editingId
-                ? `http://localhost:8000/api/banners/${editingId}`
-                : "http://localhost:8000/api/banners";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/banners/${editingId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/banners`;
             const method = editingId ? "PUT" : "POST";
 
             const formData = new FormData();
@@ -122,7 +122,7 @@ const BannerPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this banner?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/banners/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
@@ -140,7 +140,7 @@ const BannerPage: React.FC = () => {
     const handleToggleActive = async (banner: Banner) => {
         try {
             const res = await fetch(
-                `http://localhost:8000/api/banners/${banner._id}/toggle-active`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/banners/${banner._id}/toggle-active`,
                 {
                     method: "PATCH",
                     credentials: "include",
@@ -248,8 +248,8 @@ const BannerPage: React.FC = () => {
                                 <button
                                     type="submit"
                                     className={`flex-1 py-2 rounded-lg font-medium transition ${formLoading
-                                            ? "bg-blue-300 cursor-not-allowed"
-                                            : "bg-blue-600 text-white hover:bg-blue-500"
+                                        ? "bg-blue-300 cursor-not-allowed"
+                                        : "bg-blue-600 text-white hover:bg-blue-500"
                                         }`}
                                     disabled={formLoading}
                                 >
@@ -345,8 +345,8 @@ const BannerPage: React.FC = () => {
                                             key={i}
                                             onClick={() => setPage(i + 1)}
                                             className={`px-3 py-1 rounded text-sm font-medium ${page === i + 1
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-gray-100 hover:bg-gray-200"
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-gray-100 hover:bg-gray-200"
                                                 }`}
                                         >
                                             {i + 1}

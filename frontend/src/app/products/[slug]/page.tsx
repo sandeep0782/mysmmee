@@ -145,7 +145,7 @@ const page = () => {
                             <span>/</span>
                         </>
                     ) : null}
-                    <span>{product.title}</span>
+                    <span>{product.description}</span>
                 </nav>
 
                 {/* <div className="grid grid-cols-2 gap-2"> */}
@@ -193,7 +193,7 @@ const page = () => {
                         <div className="flex items-center justify-between">
                             <div className="space-y-2">
                                 <h1 className="text-2xl font-bold">{product.brand?.name}</h1>
-                                <h1 className="text-gray-500 text-2xl font-semibold">{product.title}</h1>
+                                <h1 className="text-gray-500 text-2xl font-semibold">{product.description}</h1>
                                 <p className="text-sm text-muted-foreground">Posted: {formatDate(product.createdAt)}</p>
                             </div>
                             <div className="flex gap-2">
@@ -229,6 +229,7 @@ const page = () => {
                             </div>
 
                             {/* Size Selection */}
+                            
                             <div className="flex gap-4 font-bold">
                                 <div>SELECT SIZE</div>
                                 <div className="text-red-500 cursor-pointer">SIZE CHART &gt;</div>

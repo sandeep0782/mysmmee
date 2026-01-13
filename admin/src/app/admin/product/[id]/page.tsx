@@ -83,10 +83,10 @@ const AddProductPage = ({ params }: { params: any }) => {
     const fetchOptions = async () => {
         try {
             const urls = [
-                "http://localhost:8000/api/categories",
-                "http://localhost:8000/api/brands",
-                "http://localhost:8000/api/season",
-                "http://localhost:8000/api/colors",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/brands`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/season`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/colors`,
             ];
 
             const responses = await Promise.all(urls.map(url =>
@@ -122,7 +122,7 @@ const AddProductPage = ({ params }: { params: any }) => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:8000/api/products/${productId}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`, {
                     credentials: "include",
                 });
                 const data = await res.json();
@@ -229,8 +229,8 @@ const AddProductPage = ({ params }: { params: any }) => {
             formData.append("paymentDetails", JSON.stringify(paymentDetails));
 
             const url = productId
-                ? `http://localhost:8000/api/products/${productId}`
-                : "http://localhost:8000/api/products";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
 
             const method = productId ? "PUT" : "POST";
 

@@ -75,10 +75,10 @@ const AddProductPage: React.FC = () => {
     const fetchOptions = async () => {
         try {
             const urls = [
-                "http://localhost:8000/api/categories",
-                "http://localhost:8000/api/brands",
-                "http://localhost:8000/api/season",
-                "http://localhost:8000/api/colors",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/brands`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/season`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/colors`,
             ];
 
             const responses = await Promise.all(urls.map(url =>
@@ -169,7 +169,7 @@ const AddProductPage: React.FC = () => {
             formData.append("paymentMode", form.paymentMode);
             formData.append("paymentDetails", JSON.stringify(paymentDetails));
 
-            const res = await fetch("http://localhost:8000/api/products", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",

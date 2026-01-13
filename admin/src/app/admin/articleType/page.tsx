@@ -5,7 +5,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import toast from "react-hot-toast";
 
-interface Category {
+interface ArticleTypeProps {
     _id: string;
     name: string;
     description: string;
@@ -13,8 +13,8 @@ interface Category {
 
 const ITEMS_PER_PAGE = 5;
 
-const CategoryPage: React.FC = () => {
-    const [categories, setCategories] = useState<Category[]>([]);
+const ArticleType: React.FC = () => {
+    const [articleTypes, setArticleTypes] = useState<ArticleTypeProps[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
 
@@ -25,39 +25,39 @@ const CategoryPage: React.FC = () => {
 
     const [editingId, setEditingId] = useState<string | null>(null);
 
-    /* ================= FETCH CATEGORIES ================= */
-    const fetchCategories = async () => {
+    /* ================= FETCH articleTypes ================= */
+    const fetcharticleTypes = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/categories", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`, {
                 credentials: "include",
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
-            setCategories(data.data || []);
+            setArticleTypes(data.data || []);
         } catch (err: any) {
-            toast.error(err.message || "Failed to load categories");
+            toast.error(err.message || "Failed to load articleTypes");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchCategories();
+        fetcharticleTypes();
     }, []);
 
-    /* ================= ADD / UPDATE CATEGORY ================= */
+    /* ================= ADD / UPDATE Article Type ================= */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.name.trim()) {
-            toast.error("Category name is required");
+            toast.error("Article Type name is required");
             return;
         }
 
         try {
             const url = editingId
-                ? `http://localhost:8000/api/categories/${editingId}`
-                : "http://localhost:8000/api/categories";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${editingId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -70,16 +70,16 @@ const CategoryPage: React.FC = () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
 
-            toast.success(editingId ? "Category updated successfully" : "Category added successfully");
+            toast.success(editingId ? "Article Type updated successfully" : "Article Type added successfully");
             setForm({ name: "", description: "" });
             setEditingId(null);
-            fetchCategories();
+            fetcharticleTypes();
         } catch (err: any) {
-            toast.error(err.message || "Failed to save category");
+            toast.error(err.message || "Failed to save Article Type");
         }
     };
 
-    const handleEditClick = (cat: Category) => {
+    const handleEditClick = (cat: ArticleTypeProps) => {
         setEditingId(cat._id);
         setForm({ name: cat.name, description: cat.description });
     };
@@ -91,27 +91,27 @@ const CategoryPage: React.FC = () => {
 
     /* ================= DELETE CATEGORY ================= */
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this category?")) return;
+        if (!confirm("Are you sure you want to delete this Article Type?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/categories/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
 
-            toast.success("Category deleted successfully");
-            fetchCategories();
+            toast.success("Article Type deleted successfully");
+            fetcharticleTypes();
         } catch (err: any) {
-            toast.error(err.message || "Failed to delete category");
+            toast.error(err.message || "Failed to delete Article Type");
         }
     };
 
     /* ================= PAGINATION ================= */
-    const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(articleTypes.length / ITEMS_PER_PAGE);
     const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const paginatedData = categories.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const paginatedData = articleTypes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <div className="min-h-screen bg-gray-100 p-4">
@@ -240,4 +240,4 @@ const CategoryPage: React.FC = () => {
     );
 };
 
-export default CategoryPage;
+export default ArticleType;

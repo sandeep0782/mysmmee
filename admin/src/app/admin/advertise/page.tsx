@@ -65,7 +65,7 @@ const AdvertisePage: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
-      const data = await safeFetchJson("http://localhost:8000/api/products", {
+      const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
         credentials: "include",
       });
       setProducts(data.data || []);
@@ -76,26 +76,9 @@ const AdvertisePage: React.FC = () => {
     }
   };
 
-  // Fetch campaigns
-  // const fetchCampaigns = async () => {
-  //   try {
-  //     const data = await safeFetchJson("http://localhost:8000/api/email-campaigns", {
-  //       credentials: "include",
-  //     });
-
-  //     const campaignsMap: Record<string, Campaign> = {};
-  //     (data.data || []).forEach((c: Campaign) => {
-  //       campaignsMap[c.product] = c;
-  //     });
-  //     setCampaigns(campaignsMap);
-  //   } catch (err: any) {
-  //     toast.error(err.message || "Failed to load campaigns");
-  //   }
-  // };
-
   const fetchCampaigns = async () => {
     try {
-      const data = await safeFetchJson("http://localhost:8000/api/email-campaigns", {
+      const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`, {
         credentials: "include",
       });
 
@@ -126,32 +109,6 @@ const AdvertisePage: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Send email for a product
-  // const handleSendEmail = async (productId: string) => {
-  //   try {
-  //     setSendingProducts((prev) => [...prev, productId]);
-  //     // Optimistic update
-  //     setCampaigns((prev) => ({
-  //       ...prev,
-  //       [productId]: { ...prev[productId], status: "sending", sentCount: 0, totalUsers: prev[productId]?.totalUsers || 0 },
-  //     }));
-
-  //     const data = await safeFetchJson(
-  //       `http://localhost:8000/api/email-campaigns/send-advertisement/${productId}`,
-  //       { method: "POST", credentials: "include" }
-  //     );
-
-  //     toast.success("Advertisement email sent to all users!");
-  //     setCampaigns((prev) => ({
-  //       ...prev,
-  //       [productId]: { ...data.data, product: productId },
-  //     }));
-  //   } catch (err: any) {
-  //     toast.error(err.message || "Failed to send email");
-  //   } finally {
-  //     setSendingProducts((prev) => prev.filter((id) => id !== productId));
-  //   }
-  // };
 
   const handleSendEmail = async (productId: string) => {
     try {
@@ -170,7 +127,7 @@ const AdvertisePage: React.FC = () => {
 
       // Trigger backend to start sending
       await safeFetchJson(
-        `http://localhost:8000/api/email-campaigns/send-advertisement/${productId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns/send-advertisement/${productId}`,
         { method: "POST", credentials: "include" }
       );
 
@@ -179,7 +136,7 @@ const AdvertisePage: React.FC = () => {
       // Poll backend every 2 seconds until completed
       const interval = setInterval(async () => {
         try {
-          const data = await safeFetchJson("http://localhost:8000/api/email-campaigns", {
+          const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`, {
             credentials: "include",
           });
           const updatedCampaign = data.data.find((c: Campaign) => c.product === productId);
@@ -271,8 +228,8 @@ const AdvertisePage: React.FC = () => {
                                 disabled={campaign?.status === "completed" || isSending}
                                 onClick={() => handleSendEmail(product._id)}
                                 className={`px-4 py-1 rounded transition ${campaign?.status === "completed"
-                                    ? "bg-red-500 text-white cursor-not-allowed"
-                                    : "bg-blue-600 text-white hover:bg-blue-500 cursor-pointer"
+                                  ? "bg-red-500 text-white cursor-not-allowed"
+                                  : "bg-blue-600 text-white hover:bg-blue-500 cursor-pointer"
                                   }`}
                               >
                                 <CampaignStatus campaign={campaign} isSending={isSending} />
@@ -371,7 +328,7 @@ const AdvertisePage: React.FC = () => {
                 try {
                   setSendingPreview(true);
                   const res = await fetch(
-                    `http://localhost:8000/api/email-campaigns/test-template/${previewProduct._id}`,
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns/test-template/${previewProduct._id}`,
                     {
                       method: "POST",
                       credentials: "include",

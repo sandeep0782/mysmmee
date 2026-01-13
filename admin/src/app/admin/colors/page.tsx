@@ -31,7 +31,7 @@ const ColorPage: React.FC = () => {
     const fetchColors = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/colors", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/colors`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -58,8 +58,8 @@ const ColorPage: React.FC = () => {
 
         try {
             const url = editingId
-                ? `http://localhost:8000/api/colors/${editingId}`
-                : "http://localhost:8000/api/colors";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/colors/${editingId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/colors`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -100,7 +100,7 @@ const ColorPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this color?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/colors/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/colors/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });

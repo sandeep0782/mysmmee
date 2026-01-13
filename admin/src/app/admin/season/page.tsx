@@ -31,7 +31,7 @@ const SeasonPage: React.FC = () => {
     const fetchSeasons = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/season", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/season`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -58,8 +58,8 @@ const SeasonPage: React.FC = () => {
 
         try {
             const url = editingId
-                ? `http://localhost:8000/api/season/${editingId}`
-                : "http://localhost:8000/api/season";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/season / ${editingId} `
+                : `${process.env.NEXT_PUBLIC_API_URL} /api/season`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -96,7 +96,7 @@ const SeasonPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this season?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/seasons/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/seasons/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });

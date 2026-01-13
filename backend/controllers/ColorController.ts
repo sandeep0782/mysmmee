@@ -5,7 +5,7 @@ import { response } from "../utils/responseHandler";
 // Get all colors
 export const getColors = async (_req: Request, res: Response) => {
   try {
-    const colors = await Color.find({ isActive: true }).sort({ createdAt: -1 });
+    const colors = await Color.find({ isActive: true }).sort({ name: 1 });
     return response(res, 200, "Colors fetched successfully", colors);
   } catch (error) {
     return response(res, 500, "Failed to fetch colors");

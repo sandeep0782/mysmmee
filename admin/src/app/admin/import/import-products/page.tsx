@@ -73,7 +73,7 @@ const Page = () => {
             const formData = new FormData()
             formData.append('file', file!)
 
-            const res = await fetch('http://localhost:8000/api/products/import', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/import`, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',

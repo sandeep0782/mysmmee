@@ -25,7 +25,7 @@ const CategoryPage: React.FC = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/products", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
                 credentials: "include",
             });
 
@@ -50,7 +50,7 @@ const CategoryPage: React.FC = () => {
 
         try {
             const res = await fetch(
-                `http://localhost:8000/api/products/seller/${id}`, // match backend route
+                `${process.env.NEXT_PUBLIC_API_URL}/api/products/seller/${id}`, // match backend route
                 {
                     method: "DELETE",
                     credentials: "include",

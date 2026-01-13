@@ -9,7 +9,7 @@ const Page: React.FC = () => {
 
     const handleLogout = async () => {
         try {
-            const res = await fetch("http://localhost:8000/api/auth/logout", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
                 method: "GET",
                 credentials: "include", // important to clear cookies
             });

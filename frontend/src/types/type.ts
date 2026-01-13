@@ -50,6 +50,7 @@ export interface Address {
 
 export interface Product {
   _id: string;
+  slug: string;
   images: string[];
   title: string;
   price: number;
@@ -103,5 +104,3 @@ export interface Brand {
   name: string;
   slug?: string;
 }
-
-

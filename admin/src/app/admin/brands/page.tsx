@@ -34,7 +34,7 @@ const BrandPage: React.FC = () => {
     const fetchBrands = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/brands", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/brands`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -62,8 +62,8 @@ const BrandPage: React.FC = () => {
 
         try {
             const url = editingId
-                ? `http://localhost:8000/api/brands/${editingId}`
-                : "http://localhost:8000/api/brands";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/brands/${editingId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/brands`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -109,7 +109,7 @@ const BrandPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this Brand?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/brands/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/brands/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });
@@ -289,8 +289,8 @@ const BrandPage: React.FC = () => {
                                             key={i}
                                             onClick={() => setPage(i + 1)}
                                             className={`px-3 py-1 rounded text-sm font-medium ${page === i + 1
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-gray-100 hover:bg-gray-200"
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-gray-100 hover:bg-gray-200"
                                                 }`}
                                         >
                                             {i + 1}

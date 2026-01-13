@@ -29,7 +29,7 @@ const CategoryPage: React.FC = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/api/categories", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -56,8 +56,8 @@ const CategoryPage: React.FC = () => {
 
         try {
             const url = editingId
-                ? `http://localhost:8000/api/categories/${editingId}`
-                : "http://localhost:8000/api/categories";
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${editingId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/categories`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -94,7 +94,7 @@ const CategoryPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this category?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/categories/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });

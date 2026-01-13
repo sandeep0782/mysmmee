@@ -17,7 +17,7 @@ const ForgotPassword: React.FC = () => {
   const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (data) => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/auth/forgot-password", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -40,31 +40,7 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    // <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-    //   <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-    //     <h2 className="text-2xl font-semibold mb-4 text-center">Forgot Password</h2>
-    //     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-    //       <div>
-    //         <label className="block text-gray-700 text-sm font-medium mb-1">Email</label>
-    //         <input
-    //           type="email"
-    //           placeholder="you@example.com"
-    //           {...register("email", { required: "Email is required" })}
-    //           className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/20 ${errors.email ? "border-red-500" : "border-gray-300"}`}
-    //         />
-    //         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-    //       </div>
 
-    //       <button
-    //         type="submit"
-    //         disabled={loading}
-    //         className="w-full bg-red-700 text-white py-3 rounded-xl text-sm font-semibold hover:bg-red-600 transition"
-    //       >
-    //         {loading ? "Sending..." : "Send Reset Link"}
-    //       </button>
-    //     </form>
-    //   </div>
-    // </div>
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-8">
         {/* Logo */}

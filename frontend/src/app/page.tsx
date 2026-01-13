@@ -8,6 +8,7 @@ import NewBooks from "@/app/Homepage/NewBooks";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
+import ShopByCategory from "./Homepage/ShopByCategory";
 
 // Define banner type
 interface Banner {
@@ -37,7 +38,7 @@ export default function Homepage() {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/banners");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners`);
         const data = await res.json();
         if (res.ok) {
           // Only use active banners and sort by position
@@ -110,6 +111,9 @@ export default function Homepage() {
 
       {/* Newly Added Books Section */}
       <NewBooks />
+
+      {/* shop By Category Section */}
+      <ShopByCategory />
       <Button
         size="lg"
         className="flex mt-10 mb-10 mx-auto bg-primary hover:bg-primary_hover px-8 py-6 rounded-xl"

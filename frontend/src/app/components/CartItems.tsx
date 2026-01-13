@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Trash2 } from 'lucide-react';
 import Link from "next/link";
 import Image from "next/image";
-import { CartItem } from "@/types/type"; 
+import { CartItem } from "@/types/type";
 
 interface CartItemsProps {
   items: CartItem[];
@@ -20,7 +20,7 @@ export const CartItems: React.FC<CartItemsProps> = ({ items, onRemoveItem, onTog
           key={item._id}
           className="flex flex-col md:flex-row gap-4 py-4 border-b last:border-0"
         >
-          <Link href={`/products/${item.product._id}`}>
+          <Link href={`/products/${item.product.slug}`}>
             <Image
               src={item?.product?.images?.[0] || "/placeholder.png"}
               alt={item?.product?.title || "Product Image"}
@@ -62,13 +62,12 @@ export const CartItems: React.FC<CartItemsProps> = ({ items, onRemoveItem, onTog
                 onClick={() => onToggleWishlist(item.product._id)}
               >
                 <Heart
-                  className={`h-4 w-4 mr-1 ${
-                    wishlist.some((w) =>
-                      w.products.includes(item.product._id)
-                    )
+                  className={`h-4 w-4 mr-1 ${wishlist.some((w) =>
+                    w.products.includes(item.product._id)
+                  )
                       ? "fill-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <span className="hidden md:inline">
                   {wishlist.some((w) =>

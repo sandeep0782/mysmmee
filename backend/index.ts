@@ -24,6 +24,7 @@ import bannerRoutes from "./routes/bannerRoutes";
 import advertiseRoutes from "./routes/advertiseRoutes";
 import path from "path";
 import "./services/cron"; // ✅ make sure cron runs
+import articleTypeRoutes from "./routes/articleTypeRoutes";
 
 dotenv.config();
 
@@ -61,6 +62,7 @@ app.use("/api/users", userRoute);
 app.use("/api/brands", brandRoutes);
 app.use("/api/colors", colorRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/articleTypes", articleTypeRoutes);
 app.use("/api/season", seasonRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/admin", adminRoute);
@@ -75,6 +77,5 @@ app.listen(PORT, () => {
 });
 
 export default app;
-
 
 // pm2 start index.ts --name project-backend --interpreter node --node-args="-r ts-node/register"
