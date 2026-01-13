@@ -4,16 +4,17 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const API_URLS = {
   // User related URLs
-  REGISTER: `${BASE_URL}/auth/register`,
-  LOGIN: `${BASE_URL}/auth/login`,
-  GOOGLE_LOGIN: `${BASE_URL}/auth/google`,
-  VERIFY_EMAIL: (token: string) => `${BASE_URL}/auth/verify-email/${token}`,
-  FORGOT_PASSWORD: `${BASE_URL}/auth/forgot-password`,
-  RESET_PASSWORD: (token: string) => `${BASE_URL}/auth/reset-password/${token}`,
-  VERIFY_AUTH: `${BASE_URL}/auth/verify-auth`,
-  LOGOUT: `${BASE_URL}/auth/logout`,
+  REGISTER: `${BASE_URL}/api/auth/register`,
+  LOGIN: `${BASE_URL}/api/auth/login`,
+  GOOGLE_LOGIN: `${BASE_URL}/api/auth/google`,
+  VERIFY_EMAIL: (token: string) => `${BASE_URL}/api/auth/verify-email/${token}`,
+  FORGOT_PASSWORD: `${BASE_URL}/api/auth/forgot-password`,
+  RESET_PASSWORD: (token: string) =>
+    `${BASE_URL}/api/auth/reset-password/${token}`,
+  VERIFY_AUTH: `${BASE_URL}/api/auth/verify-auth`,
+  LOGOUT: `${BASE_URL}/api/auth/logout`,
   UPDATE_USER_PROFILE: (userId: string) =>
-    `${BASE_URL}/users/profile/update/${userId}`,
+    `${BASE_URL}/api/users/profile/update/${userId}`,
 
   // Product related URLs
   BRANDS: `${BASE_URL}/api/brands`,
@@ -23,33 +24,33 @@ const API_URLS = {
 
   // Product related URLs
   PRODUCTS: `${BASE_URL}/api/products`,
-  PRODUCT_BY_ID: (id: string) => `${BASE_URL}/products/${id}`,
-  PRODUCT_BY_SLUG: (slug: string) => `${BASE_URL}/products/slug/${slug}`,
+  PRODUCT_BY_ID: (id: string) => `${BASE_URL}/api/products/${id}`,
+  PRODUCT_BY_SLUG: (slug: string) => `${BASE_URL}/api/products/slug/${slug}`,
   GET_PRODUCT_BY_SELLERID: (sellerId: string) =>
-    `${BASE_URL}/products/seller/${sellerId}`,
+    `${BASE_URL}/api/products/seller/${sellerId}`,
   DELETE_PRODUCT_BY_PRODUCTID: (productId: string) =>
-    `${BASE_URL}/products/seller/${productId}`,
+    `${BASE_URL}/api/products/seller/${productId}`,
 
   // Cart related URLs
-  CART: (userId: string) => `${BASE_URL}/cart/${userId}`,
-  ADD_TO_CART: `${BASE_URL}/cart/add`,
+  CART: (userId: string) => `${BASE_URL}/api/cart/${userId}`,
+  ADD_TO_CART: `${BASE_URL}/api/cart/add`,
   REMOVE_FROM_CART: (productId: string) =>
-    `${BASE_URL}/cart/remove/${productId}`,
+    `${BASE_URL}/api/cart/remove/${productId}`,
 
   // Wishlist related URLs
-  WISHLIST: `${BASE_URL}/wishlist`,
-  ADD_TO_WISHLIST: `${BASE_URL}/wishlist/add`,
+  WISHLIST: `${BASE_URL}/api/wishlist`,
+  ADD_TO_WISHLIST: `${BASE_URL}/api/wishlist/add`,
   REMOVE_FROM_WISHLIST: (productId: string) =>
-    `${BASE_URL}/wishlist/remove/${productId}`,
+    `${BASE_URL}/api/wishlist/remove/${productId}`,
 
   // Order related URLs
-  ORDERS: `${BASE_URL}/orders`,
-  ORDER_BY_ID: (orderId: string) => `${BASE_URL}/orders/${orderId}`,
-  CREATE_PAYMENT_INTENT: `${BASE_URL}/orders/payment-razorpay`,
+  ORDERS: `${BASE_URL}/api/orders`,
+  ORDER_BY_ID: (orderId: string) => `${BASE_URL}/api/orders/${orderId}`,
+  CREATE_PAYMENT_INTENT: `${BASE_URL}/api/orders/payment-razorpay`,
 
   //address related URLs
-  GET_ADDRESS: `${BASE_URL}/address`,
-  ADD_OR_UPDATE_ADDRESS: `${BASE_URL}/address/create-or-update`,
+  GET_ADDRESS: `${BASE_URL}/api/address`,
+  ADD_OR_UPDATE_ADDRESS: `${BASE_URL}/api/address/create-or-update`,
 };
 
 export const api = createApi({
