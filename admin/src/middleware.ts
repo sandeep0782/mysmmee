@@ -8,22 +8,44 @@ const protectedRoutes = ["/admin", "/user"];
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Check if the requested path starts with any protected route
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-    const token = req.cookies.get("access_token"); // assuming JWT or session stored in cookies
+    const tokenCookie = req.cookies.get("access_token"); // returns RequestCookie
 
-    if (!token) {
-      // Redirect to login page if not authenticated
+    // No token → redirect to login
+    if (!tokenCookie) {
       const loginUrl = new URL("/auth/login", req.nextUrl.origin);
       return NextResponse.redirect(loginUrl);
     }
+
+    const token = tokenCookie.value; // <-- access the string value
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1])); // decode JWT payload
+      const role = payload.role;
+      console.log(role);
+
+      // Redirect if role doesn't match the route
+      if (pathname.startsWith("/admin") && role !== "admin") {
+        return NextResponse.redirect(
+          new URL("/user/dashboard", req.nextUrl.origin)
+        );
+      }
+
+      if (pathname.startsWith("/user") && role !== "user") {
+        return NextResponse.redirect(
+          new URL("/admin/dashboard", req.nextUrl.origin)
+        );
+      }
+    } catch (error) {
+      console.log("Invalid JWT in middleware:", error);
+      return NextResponse.redirect(new URL("/auth/login", req.nextUrl.origin));
+    }
   }
 
-  // Continue if not a protected route or user is authenticated
   return NextResponse.next();
 }
 
-// Middleware runs only on /admin and /user routes
+// Only run middleware on admin and user routes
 export const config = {
   matcher: ["/admin/:path*", "/user/:path*"],
 };

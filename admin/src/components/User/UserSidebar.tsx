@@ -26,23 +26,23 @@ type SidebarProps = {
 };
 
 const menuItems = [
-    { icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", href: "/admin/dashboard" },
+    { icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", href: "/user/dashboard" },
    
-    { icon: <Package className="w-5 h-5" />, label: "Products", href: "/admin/product" },
-    { icon: <Database className="w-5 h-5" />, label: "Import", href: "/admin/import" },
+    { icon: <Package className="w-5 h-5" />, label: "Products", href: "/user/product" },
+    { icon: <Database className="w-5 h-5" />, label: "Import", href: "/user/import" },
 ];
 
 const libraryItems = [
-    { icon: <List className="w-5 h-5" />, label: "Orders", href: "/admin/orders" },
-    { icon: <Clock className="w-5 h-5" />, label: "Payment", href: "/admin/payment" },
-    { icon: <Video className="w-5 h-5" />, label: "Review", href: "/admin/review" },
-    { icon: <Clock className="w-5 h-5" />, label: "Watch Later", href: "/admin/watch-later" },
-    { icon: <ThumbsUp className="w-5 h-5" />, label: "Liked Videos", href: "/admin/liked" },
+    { icon: <List className="w-5 h-5" />, label: "Orders", href: "/user/orders" },
+    { icon: <Clock className="w-5 h-5" />, label: "Payment", href: "/user/payment" },
+    { icon: <Video className="w-5 h-5" />, label: "Review", href: "/user/review" },
+    { icon: <Clock className="w-5 h-5" />, label: "Watch Later", href: "/user/watch-later" },
+    { icon: <ThumbsUp className="w-5 h-5" />, label: "Liked Videos", href: "/user/liked" },
 ];
 
 const bottomItems = [
-    { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/admin/settings" },
-    { icon: <HelpCircle className="w-5 h-5" />, label: "Help", href: "/admin/help" },
+    { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/user/settings" },
+    { icon: <HelpCircle className="w-5 h-5" />, label: "Help", href: "/user/help" },
 ];
 
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {

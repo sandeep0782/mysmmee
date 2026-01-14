@@ -9,6 +9,7 @@ interface ArticleTypeProps {
     _id: string;
     name: string;
     description: string;
+    image?: string;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -18,35 +19,90 @@ const ArticleType: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<{
+        name: string;
+        description: string;
+        image?: File;
+    }>({
         name: "",
         description: "",
     });
 
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-    /* ================= FETCH articleTypes ================= */
-    const fetcharticleTypes = async () => {
+    /* ================= FETCH ArticleTypes ================= */
+    const fetchArticleTypes = async () => {
         try {
             setLoading(true);
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`, {
-                credentials: "include",
+                credentials: "include", // send cookies automatically
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            if (!res.ok) throw new Error(data.message || "Failed to load Article Types");
             setArticleTypes(data.data || []);
         } catch (err: any) {
-            toast.error(err.message || "Failed to load articleTypes");
+            toast.error(err.message || "Failed to load Article Types");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetcharticleTypes();
+        fetchArticleTypes();
     }, []);
 
-    /* ================= ADD / UPDATE Article Type ================= */
+    /* ================= ADD / UPDATE ArticleType ================= */
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!form.name.trim()) {
+    //         toast.error("Article Type name is required");
+    //         return;
+    //     }
+
+    //     try {
+    //         const url = editingId
+    //             ? `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${editingId}`
+    //             : `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`;
+    //         const method = editingId ? "PUT" : "POST";
+
+    //         const formData = new FormData();
+    //         formData.append("name", form.name);
+    //         formData.append("description", form.description || "");
+    //         if (form.image) formData.append("image", form.image);
+
+    //         const res = await fetch(url, {
+    //             method,
+    //             credentials: "include", // cookie-based auth
+    //             body: formData,
+    //         });
+
+    //         // const data = await res.json();
+    //         const contentType = res.headers.get("content-type");
+
+    //         let data: any;
+    //         if (contentType && contentType.includes("application/json")) {
+    //             data = await res.json();
+    //         } else {
+    //             const text = await res.text();
+    //             console.error("Server returned HTML:", text);
+    //             throw new Error("Server did not return JSON");
+    //         }
+    //         if (!res.ok) throw new Error(data.message || "Failed to save Article Type");
+
+    //         toast.success(editingId ? "Article Type updated successfully" : "Article Type added successfully");
+
+    //         setForm({ name: "", description: "" });
+    //         setImagePreview(null);
+    //         setEditingId(null);
+    //         fetchArticleTypes();
+    //     } catch (err: any) {
+    //         toast.error(err.message || "Failed to save Article Type");
+    //     }
+    // };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.name.trim()) {
@@ -55,57 +111,93 @@ const ArticleType: React.FC = () => {
         }
 
         try {
+            setSubmitting(true); // ✅ disable button
             const url = editingId
                 ? `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${editingId}`
                 : `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`;
             const method = editingId ? "PUT" : "POST";
 
+            const formData = new FormData();
+            formData.append("name", form.name);
+            formData.append("description", form.description || "");
+            if (form.image) formData.append("image", form.image);
+
             const res = await fetch(url, {
                 method,
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(form),
+                body: formData,
             });
 
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            const contentType = res.headers.get("content-type");
+            let data: any;
+
+            if (contentType && contentType.includes("application/json")) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                console.error("Server returned HTML:", text);
+                throw new Error("Server did not return JSON");
+            }
+
+            if (!res.ok) throw new Error(data.message || "Failed to save Article Type");
 
             toast.success(editingId ? "Article Type updated successfully" : "Article Type added successfully");
-            setForm({ name: "", description: "" });
-            setEditingId(null);
-            fetcharticleTypes();
+
+            // Reset form
+            handleCancelEdit();
+            fetchArticleTypes();
         } catch (err: any) {
             toast.error(err.message || "Failed to save Article Type");
+        } finally {
+            setSubmitting(false); // ✅ enable button again
         }
     };
 
-    const handleEditClick = (cat: ArticleTypeProps) => {
-        setEditingId(cat._id);
-        setForm({ name: cat.name, description: cat.description });
+    /* ================= EDIT ================= */
+    const handleEditClick = (article: ArticleTypeProps) => {
+        setEditingId(article._id);
+        setForm({
+            name: article.name,
+            description: article.description,
+        });
+        setImagePreview(article.image || null);
     };
 
     const handleCancelEdit = () => {
         setEditingId(null);
         setForm({ name: "", description: "" });
+        setImagePreview(null);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
-    /* ================= DELETE CATEGORY ================= */
+    /* ================= DELETE ================= */
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this Article Type?")) return;
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${id}`, {
                 method: "DELETE",
-                credentials: "include",
+                credentials: "include", // cookie auth
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            if (!res.ok) throw new Error(data.message || "Failed to delete Article Type");
 
             toast.success("Article Type deleted successfully");
-            fetcharticleTypes();
+            fetchArticleTypes();
         } catch (err: any) {
             toast.error(err.message || "Failed to delete Article Type");
         }
+    };
+
+    /* ================= HANDLE IMAGE UPLOAD ================= */
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+        setForm({ ...form, image: file });
+        setImagePreview(URL.createObjectURL(file));
     };
 
     /* ================= PAGINATION ================= */
@@ -118,12 +210,12 @@ const ArticleType: React.FC = () => {
             {/* ===== Header ===== */}
             <Card className="mb-6">
                 <div className="p-4">
-                    <h1 className="text-2xl font-semibold text-gray-800">Article Type</h1>
+                    <h1 className="text-2xl font-semibold text-gray-800">Article Types</h1>
                 </div>
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* ===== Add / Edit Category Form ===== */}
+                {/* ===== Add / Edit Form ===== */}
                 <Card className="self-start">
                     <div className="p-4">
                         <h2 className="text-lg font-semibold mb-4">
@@ -150,13 +242,33 @@ const ArticleType: React.FC = () => {
                                 />
                             </div>
 
+                            <div>
+                                <label className="text-sm font-medium">Image</label>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                                {imagePreview && (
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="w-24 h-24 object-cover rounded mt-2"
+                                    />
+                                )}
+                            </div>
+
                             <div className="flex gap-2">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition font-medium"
+                                    disabled={submitting}
+                                    className={`flex-1 py-2 rounded-lg transition font-medium ${submitting ? "bg-gray-400 text-gray-200" : "bg-blue-600 text-white hover:bg-blue-500"}`}
                                 >
-                                    {editingId ? "Update" : "Save Category"}
+                                    {submitting ? "Saving..." : editingId ? "Update" : "Save"}
                                 </button>
+
                                 {editingId && (
                                     <button
                                         type="button"
@@ -171,7 +283,7 @@ const ArticleType: React.FC = () => {
                     </div>
                 </Card>
 
-                {/* ===== Category Table ===== */}
+                {/* ===== Table ===== */}
                 <Card className="lg:col-span-2">
                     <div className="p-4">
                         <h2 className="text-lg font-semibold mb-4">Article Type List</h2>
@@ -184,6 +296,7 @@ const ArticleType: React.FC = () => {
                                     <table className="w-full border-collapse">
                                         <thead>
                                             <tr className="bg-gray-50 text-sm text-gray-600">
+                                                <th className="p-3 text-left">Image</th>
                                                 <th className="p-3 text-left">Name</th>
                                                 <th className="p-3 text-left">Description</th>
                                                 <th className="p-3 text-right">Actions</th>
@@ -192,23 +305,28 @@ const ArticleType: React.FC = () => {
                                         <tbody>
                                             {paginatedData.map((cat) => (
                                                 <tr key={cat._id} className="border-t hover:bg-gray-50">
+                                                    <td className="p-3">
+                                                        {cat.image ? (
+                                                            <img src={cat.image} alt={cat.name} className="w-12 h-12 object-cover rounded" />
+                                                        ) : (
+                                                            "-"
+                                                        )}
+                                                    </td>
                                                     <td className="p-3 font-medium">{cat.name}</td>
                                                     <td className="p-3 text-gray-600">{cat.description}</td>
-                                                    <td className="p-3">
-                                                        <div className="flex justify-end gap-2">
-                                                            <button
-                                                                onClick={() => handleEditClick(cat)}
-                                                                className="p-2 hover:bg-blue-50 rounded text-blue-600"
-                                                            >
-                                                                <Edit className="w-4 h-4" />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleDelete(cat._id)}
-                                                                className="p-2 hover:bg-red-50 rounded text-red-600"
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
+                                                    <td className="p-3 text-right flex justify-end gap-2">
+                                                        <button
+                                                            onClick={() => handleEditClick(cat)}
+                                                            className="p-2 hover:bg-blue-50 rounded text-blue-600"
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(cat._id)}
+                                                            className="p-2 hover:bg-red-50 rounded text-red-600"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))}

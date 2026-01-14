@@ -1,46 +1,49 @@
 import { Request, Response } from "express";
 import { response } from "../utils/responseHandler";
 import ArticleType from "../models/ArticleType";
+import { removeLocalFile } from "../utils/removeFile";
+import { uploadImageToCloudinary } from "../utils/cloudinary";
 
-// Create a new category
 export const createArticleType = async (req: Request, res: Response) => {
-  try {
-    const { name, description, slug, image } = req.body;
+  let filePath: string | undefined;
 
-    if (!name) {
+  try {
+    const { name, description, slug, isActive } = req.body;
+
+    if (!name?.trim()) {
       return response(res, 400, "Article Type name is required");
     }
 
-    // Check if category already exists
-    const existingArticleType = await ArticleType.findOne({ name });
-    if (existingArticleType) {
+    const existing = await ArticleType.findOne({ name: name.trim() });
+    if (existing) {
       return response(res, 409, "Article Type with this name already exists");
     }
 
-    // Optional: auto-generate slug if not provided
-    const articleTypeSlug = slug
-      ? slug
-      : name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "");
+    const data: any = {
+      name: name.trim(),
+      description: description || "",
+      isActive: isActive !== "false",
+    };
 
-    const newarticleType = await ArticleType.create({
-      name,
-      description,
-      slug: articleTypeSlug,
-      image,
-    });
+    if (slug) data.slug = slug; // schema auto-generates if missing
 
-    return response(
-      res,
-      201,
-      "Article TYpe created successfully",
-      newarticleType
-    );
+    /* ===== IMAGE UPLOAD ===== */
+    if (req.file) {
+      filePath = req.file.path;
+
+      const upload = await uploadImageToCloudinary(filePath, "article-types");
+
+      data.image = upload.secure_url;
+    }
+
+    const articleType = await ArticleType.create(data);
+
+    return response(res, 201, "Article Type created successfully", articleType);
   } catch (error) {
-    console.error(error);
+    console.error("Create ArticleType Error:", error);
     return response(res, 500, "Internal Server Error");
+  } finally {
+    if (filePath) removeLocalFile(filePath);
   }
 };
 
@@ -76,34 +79,70 @@ export const getArticleTypeById = async (req: Request, res: Response) => {
   }
 };
 
-// Update Article Type
 export const updateArticleType = async (req: Request, res: Response) => {
-  try {
-    const { name, description, slug, image } = req.body;
+  let filePath: string | undefined;
 
-    const articletype = await ArticleType.findById(req.params.id);
-    if (!articletype) {
+  try {
+    const { name, description, slug, isActive } = req.body;
+
+    const articleType = await ArticleType.findById(req.params.id);
+    if (!articleType) {
       return response(res, 404, "Article Type not found");
     }
 
-    if (name) articletype.name = name;
-    if (description) articletype.description = description;
-    if (slug) articletype.slug = slug;
-    if (image) articletype.image = image;
+    if (name) articleType.name = name.trim();
+    if (description !== undefined) articleType.description = description;
+    if (slug) articleType.slug = slug;
+    if (isActive !== undefined) articleType.isActive = isActive === "true";
 
-    const updatedArticleType = await articletype.save();
+    /* ===== IMAGE UPDATE ===== */
+    if (req.file) {
+      filePath = req.file.path;
 
-    return response(
-      res,
-      200,
-      "Article Type updated successfully",
-      updatedArticleType
-    );
-  } catch (error) {
-    console.error(error);
+      const upload = await uploadImageToCloudinary(filePath, "article-types");
+
+      articleType.image = upload.secure_url;
+    }
+
+    const updated = await articleType.save();
+
+    return response(res, 200, "Article Type updated successfully", updated);
+  } catch (error: any) {
+    console.error("Update ArticleType Error:", error);
     return response(res, 500, "Internal Server Error");
+  } finally {
+    if (filePath) removeLocalFile(filePath);
   }
 };
+
+// Update Article Type
+// export const updateArticleType = async (req: Request, res: Response) => {
+//   try {
+//     const { name, description, slug, image } = req.body;
+
+//     const articletype = await ArticleType.findById(req.params.id);
+//     if (!articletype) {
+//       return response(res, 404, "Article Type not found");
+//     }
+
+//     if (name) articletype.name = name;
+//     if (description) articletype.description = description;
+//     if (slug) articletype.slug = slug;
+//     if (image) articletype.image = image;
+
+//     const updatedArticleType = await articletype.save();
+
+//     return response(
+//       res,
+//       200,
+//       "Article Type updated successfully",
+//       updatedArticleType
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     return response(res, 500, "Internal Server Error");
+//   }
+// };
 
 // Delete category
 export const deleteArticleType = async (req: Request, res: Response) => {

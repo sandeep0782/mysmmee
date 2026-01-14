@@ -1,17 +1,30 @@
 import express from "express";
 import { authenticateUser } from "../middleware/authMiddleware";
 import * as ArticleTypes from "../controllers/articleTypeController";
+import { singleFileUpload } from "../utils/commonSingleUpload";
 
 const router = express.Router();
 
-router.post("/", authenticateUser, ArticleTypes.createArticleType);
+/* CREATE */
+router.post(
+  "/",
+  authenticateUser,
+  singleFileUpload("article-types").single("image"),
+  ArticleTypes.createArticleType
+);
 
+/* READ */
 router.get("/", authenticateUser, ArticleTypes.getAllArticleTypes);
-
 router.get("/:id", authenticateUser, ArticleTypes.getArticleTypeById);
 
-router.put("/:id", authenticateUser, ArticleTypes.updateArticleType);
-
+/* UPDATE */
+router.put(
+  "/:id",
+  authenticateUser,
+  singleFileUpload("article-types").single("image"),
+  ArticleTypes.updateArticleType
+);
+/* DELETE */
 router.delete("/:id", authenticateUser, ArticleTypes.deleteArticleType);
 
 export default router;

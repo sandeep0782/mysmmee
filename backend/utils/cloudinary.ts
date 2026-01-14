@@ -15,3 +15,16 @@ export const uploadBannerToCloudinary = async (filePath: string) => {
     resource_type: "image",
   });
 };
+
+export const uploadImageToCloudinary = async (
+  filePath: string,
+  folder: string
+) => {
+  return await cloudinary.uploader.upload(filePath, {
+    folder,
+    resource_type: "image",
+    use_filename: true,
+    unique_filename: true,
+    overwrite: false,
+  });
+};
