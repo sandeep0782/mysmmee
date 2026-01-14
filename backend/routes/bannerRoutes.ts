@@ -5,17 +5,15 @@ import { bannerUpload } from "../config/bannerUpload";
 
 const router = Router();
 
-/**
- * Simple wrapper to catch Multer errors
- */
 const uploadWithError = (req: any, res: any, next: any) => {
-  bannerUpload(req, res, (err: any) => {
+  console.log("[Upload] Starting file upload");
+
+  bannerUpload.single("image")(req, res, (err: any) => {
     if (err) {
-      return res.status(400).json({
-        success: false,
-        message: err.message,
-      });
+      console.error("[Upload] Multer error:", err.message);
+      return res.status(400).json({ success: false, message: err.message });
     }
+    console.log("[Upload] File upload completed:", req.file?.originalname);
     next();
   });
 };
@@ -28,7 +26,7 @@ router.post(
   bannerController.createBanner
 );
 
-// Get all banners (public)
+// Get banners
 router.get("/", bannerController.getAllBanners);
 
 // Update banner
@@ -41,5 +39,7 @@ router.put(
 
 // Delete banner
 router.delete("/:id", authenticateUser, bannerController.deleteBanner);
+
+router.patch("/:id/toggle-active", bannerController.toggleBannerActive);
 
 export default router;

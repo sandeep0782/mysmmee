@@ -138,9 +138,35 @@ export default function CheckoutPage() {
   const totalOriginalPrice = cart.items.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const totalDiscount = totalOriginalPrice - totalAmount;
 
-  const shippingCharge = cart.items.map(item => item.product.shippingCharge.toLowerCase() === 'free' ? 0 : parseFloat(item.product.shippingCharge) || 0)
-  const maximunShippingCharge = Math.max(...shippingCharge, 0)
+  // const shippingCharge = cart.items.map(item => item.product.shippingCharge.toLowerCase() === 'free' ? 0 : parseFloat(item.product.shippingCharge) || 0)
+
+  const shippingCharges = cart.items.map(item => {
+    const charge = item?.product?.shippingCharge;
+
+    // No product or no charge
+    if (!charge) return 0;
+
+    // If string (Free / "50" / "FREE")
+    if (typeof charge === "string") {
+      return charge.toLowerCase() === "free"
+        ? 0
+        : Number(charge) || 0;
+    }
+
+    // If number
+    if (typeof charge === "number") {
+      return charge;
+    }
+
+    return 0;
+  });
+
+
+
+  const maximunShippingCharge = Math.max(0, ...shippingCharges);
   const finalAmount = totalAmount + maximunShippingCharge;
+  // const maximunShippingCharge = Math.max(...shippingCharge, 0)
+  // const finalAmount = totalAmount + maximunShippingCharge;
 
   const handleOpenLogin = () => {
     dispatch(toggleLoginDialog());
