@@ -3,7 +3,6 @@ import cors from "cors";
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL,
-  "http://192.168.1.25:5000",
 ];
 
 // Dynamic CORS options

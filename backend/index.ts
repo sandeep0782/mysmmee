@@ -35,6 +35,7 @@ const app = express();
 //     origin:process.env.FRONTEND_URL,
 //     credentials: true,
 // }
+app.options("*", cors(corsOptions)); // handle preflight
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(passport.initialize());
