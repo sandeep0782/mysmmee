@@ -19,6 +19,7 @@ const API_URLS = {
   // Product related URLs
   BRANDS: `${BASE_URL}/api/brands`,
   CATEGORIES: `${BASE_URL}/api/categories`,
+  ARTICLETYPE: `${BASE_URL}/api/articleTypes`,
   COLORS: `${BASE_URL}/api/colors`,
   SEASONS: `${BASE_URL}/api/season`,
 
@@ -69,6 +70,7 @@ export const api = createApi({
     "Category",
     "Color",
     "Season",
+    "Article Type",
   ],
   endpoints: (builder) => ({
     // User endpoints
@@ -149,6 +151,20 @@ export const api = createApi({
         url: API_URLS.CATEGORIES,
         method: "POST",
         body: categoryData,
+      }),
+      invalidatesTags: ["Category"],
+    }),
+
+    // Category Endpoints
+    getArticleTypes: builder.query({
+      query: () => API_URLS.ARTICLETYPE,
+      providesTags: ["Article Type"],
+    }),
+    createArticleTypes: builder.mutation({
+      query: (ArticleTypeData) => ({
+        url: API_URLS.ARTICLETYPE,
+        method: "POST",
+        body: ArticleTypeData,
       }),
       invalidatesTags: ["Category"],
     }),
@@ -330,6 +346,9 @@ export const {
 
   useGetCategoriesQuery,
   useCreateCategoryMutation,
+
+  useGetArticleTypesQuery,
+  useCreateArticleTypesMutation,
 
   useGetColorsQuery,
   useCreateColorMutation,

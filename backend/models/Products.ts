@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   subject: string;
   slug: string;
   category: mongoose.Types.ObjectId;
+  articleType: mongoose.Types.ObjectId;
   brand: mongoose.Types.ObjectId;
   season: mongoose.Types.ObjectId;
   color: mongoose.Types.ObjectId;
@@ -47,6 +48,12 @@ const productSchema = new Schema<IProduct>(
     brand: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
     season: { type: Schema.Types.ObjectId, ref: "Season", required: true },
     color: { type: Schema.Types.ObjectId, ref: "Color", required: true },
+    articleType: {
+      type: Schema.Types.ObjectId,
+      ref: "ArticleType",
+      required: true,
+    },
+
     gender: { type: String, required: true },
     subject: { type: String, required: true },
     images: [{ type: String }],

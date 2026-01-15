@@ -105,8 +105,9 @@ export const getAllProducts = async (req: Request, res: Response) => {
       .populate("brand", "name slug")
       .populate("color", "name slug")
       .populate("category", "name slug")
-      .populate("season", "name slug");
-
+      .populate("season", "name slug")
+      .populate("articleType", "name slug"); // <-- add this line
+      
     response(res, 200, "Products fetched successfully", products);
   } catch (error) {
     response(res, 500, "Error fetching products");
@@ -143,7 +144,6 @@ export const getProductBySlug = async (req: Request, res: Response) => {
       .populate("season")
       .populate("color")
       .populate("seller");
-
 
     if (!product) {
       return response(res, 404, "Product not found");

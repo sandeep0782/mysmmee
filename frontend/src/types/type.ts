@@ -4,6 +4,7 @@ export interface BookDetails {
   slug: string;
   images: string[];
   subject: string;
+  articleType: ArticleType;
   brand: Brand;
   color: Colors;
   season: string;
@@ -100,6 +101,11 @@ export interface Colors {
   slug?: string;
 }
 export interface Brand {
+  _id: string;
+  name: string;
+  slug?: string;
+}
+export interface ArticleType {
   _id: string;
   name: string;
   slug?: string;

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useGetCategoriesQuery } from "@/store/api";
+import { useGetArticleTypesQuery, useGetCategoriesQuery } from "@/store/api";
 import BookLoader from "@/lib/BookLoader";
 
 interface Category {
@@ -15,11 +15,11 @@ interface Category {
   image?: string;
 }
 
-const ITEMS_PER_SLIDE = 3;
+const ITEMS_PER_SLIDE = 5;
 
 const ShopByCategory = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { data: apiResponse, isLoading } = useGetCategoriesQuery({});
+  const { data: apiResponse, isLoading } = useGetArticleTypesQuery({});
   const [categories, setCategories] = useState<Category[]>([]);
 
   /* ================= LOAD CATEGORIES ================= */
@@ -85,28 +85,40 @@ const ShopByCategory = () => {
                       .map((category) => (
                         <Card
                           key={category._id}
-                          className="w-40 h-40 rounded-full flex flex-col items-center justify-center shadow-md hover:shadow-lg transition"
+                          className="w-40 h-60 relative overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
                         >
                           <Link
-                            href={`/products?category=${category.slug}`}
-                            className="flex flex-col items-center justify-center"
+                            href={`/products?articleType=${category._id}`}
+                            className="block w-full h-full"
                           >
-                            <div className="relative w-24 h-24 mb-3">
-                              {category.image && (
-                                <Image
-                                  src={category.image}
-                                  alt={category.name}
-                                  fill
-                                  className="object-cover rounded-full"
-                                />
+                            {/* Image container */}
+                            <div className="relative w-full h-full overflow-hidden group">
+                              {category.image ? (
+                                <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
+                                  <Image
+                                    src={category.image}
+                                    alt={category.name}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="bg-gray-200 w-full h-full flex items-center justify-center">
+                                  <span className="text-gray-500">No Image</span>
+                                </div>
                               )}
+
+                              {/* Overlay for text */}
+                              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                <h3 className="text-white text-center text-sm font-semibold px-2 line-clamp-2">
+                                  {category.name}
+                                </h3>
+                              </div>
                             </div>
-                            <h3 className="text-center text-sm font-medium line-clamp-2">
-                              {category.name}
-                            </h3>
                           </Link>
                         </Card>
                       ))}
+
                   </div>
                 </div>
               ))}
@@ -136,11 +148,10 @@ const ShopByCategory = () => {
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-3 w-3 rounded-full ${
-                      currentSlide === index
-                        ? "bg-blue-600"
-                        : "bg-gray-300"
-                    }`}
+                    className={`h-3 w-3 rounded-full ${currentSlide === index
+                      ? "bg-blue-600"
+                      : "bg-gray-300"
+                      }`}
                   />
                 ))}
               </div>

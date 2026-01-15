@@ -23,6 +23,7 @@ import toast from 'react-hot-toast'
 import { useAddToCartMutation, useAddToWishlistMutation, useGetProductsQuery, useRemoveFromWishlistMutation } from '@/store/api'
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { addToCart } from '@/store/slices/cartSlice'
+import { useSearchParams } from 'next/navigation';
 
 
 
@@ -45,6 +46,13 @@ const Products = () => {
     const [addedProductIds, setAddedProductIds] = useState<Set<string>>(new Set());
     const [addToCartMutation] = useAddToCartMutation();
     const cart = useSelector((state: RootState) => state.cart);
+
+
+    const searchParams = useSearchParams()
+    const articleTypeSlug = searchParams.get('articleType'); // e.g., "kurta"
+
+    console.log(articleTypeSlug)
+
 
 
     useEffect(() => {
@@ -88,10 +96,14 @@ const Products = () => {
             selectedCategory.length === 0 ||
             selectedCategory.includes(product.category?._id);
 
+        const articleTypeMatch =
+            !articleTypeSlug || product.articleType?._id === articleTypeSlug; // ✅ filter by slug
+
         const searchMatch =
             !searchTerms ||
             product.title.toLowerCase().includes(searchTerms.toLowerCase()) ||
             product.description?.toLowerCase().includes(searchTerms.toLowerCase());
+
 
 
         return (
@@ -99,6 +111,7 @@ const Products = () => {
             genderMatch &&
             colorMatch &&
             categoryMatch &&
+            articleTypeMatch &&
             searchMatch
         );
     });
