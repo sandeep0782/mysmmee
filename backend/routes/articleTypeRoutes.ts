@@ -2,6 +2,7 @@ import express from "express";
 import { authenticateUser } from "../middleware/authMiddleware";
 import * as ArticleTypes from "../controllers/articleTypeController";
 import { singleFileUpload } from "../utils/commonSingleUpload";
+import upload from "../config/articleType/multer";
 
 const router = express.Router();
 
@@ -14,6 +15,12 @@ router.post(
     // multer stores file here
     next();
   },
+  ArticleTypes.createArticleType
+);
+
+router.post(
+  "/article-type",
+  upload.single("image"),
   ArticleTypes.createArticleType
 );
 
@@ -30,6 +37,5 @@ router.put(
 );
 /* DELETE */
 router.delete("/:id", authenticateUser, ArticleTypes.deleteArticleType);
-
 
 export default router;

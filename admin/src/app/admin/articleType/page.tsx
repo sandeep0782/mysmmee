@@ -114,7 +114,7 @@ const ArticleType: React.FC = () => {
             setSubmitting(true); // ✅ disable button
             const url = editingId
                 ? `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/${editingId}`
-                : `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`;
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes/article-type`;
             const method = editingId ? "PUT" : "POST";
 
             const formData = new FormData();
