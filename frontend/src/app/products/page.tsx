@@ -51,7 +51,9 @@ const Products = () => {
     const searchParams = useSearchParams()
     const articleTypeSlug = searchParams.get('articleType'); // e.g., "kurta"
 
-    console.log(articleTypeSlug)
+    const genderParam = searchParams.get("gender"); // e.g., "men"
+
+    console.log(genderParam)
 
 
 
@@ -98,6 +100,8 @@ const Products = () => {
 
         const articleTypeMatch =
             !articleTypeSlug || product.articleType?._id === articleTypeSlug; // ✅ filter by slug
+
+
 
         const searchMatch =
             !searchTerms ||
@@ -198,6 +202,14 @@ const Products = () => {
         }
     };
 
+
+    useEffect(() => {
+        if (genderParam) {
+            setSelectedGender([genderParam]); // set it as the selected filter
+        } else {
+            setSelectedGender([]); // no gender selected
+        }
+    }, [genderParam]);
 
     return (
         <div className="min-h-screen bg-white">

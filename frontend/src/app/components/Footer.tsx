@@ -15,27 +15,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/men" className="hover:text-white">
+                <Link href="/products?gender=men" className="hover:text-white">
                   Men
                 </Link>
               </li>
               <li>
-                <Link href="/women" className="hover:text-white">
+                <Link href="/products?gender=women" className="hover:text-white">
                   Women
                 </Link>
               </li>
               <li>
-                <Link href="/kids" className="hover:text-white">
-                  Kids
+                <Link href="/products?gender=boys" className="hover:text-white">
+                  Boys
                 </Link>
               </li>
               <li>
-                <Link href="/home" className="hover:text-white">
-                  Home
+                <Link href="/products?gender=girls" className="hover:text-white">
+                  Girls
                 </Link>
               </li>
               <li>
-                <Link href="/genz" className="hover:text-white">
+                <Link href="/products?gender=genz" className="hover:text-white">
                   GenZ
                 </Link>
               </li>
@@ -112,28 +112,28 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white">
+                <Link href="/tac" className="hover:text-white">
                   T&amp;C
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-white">
+                <Link href="/faq?section=shipping" className="hover:text-white">
                   Shipping
                 </Link>
               </li>
               <li>
-                <Link href="/cancellation" className="hover:text-white">
+                <Link href="/faq?section=cancellation" className="hover:text-white">
                   Cancellation
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:text-white">
+                <Link href="/faq?section=returns" className="hover:text-white">
                   Returns
                 </Link>
               </li>
 
               <li>
-                <Link href="/grievance" className="hover:text-white">
+                <Link href="/faq?section=grievance" className="hover:text-white">
                   Grievance Redressal
                 </Link>
               </li>
