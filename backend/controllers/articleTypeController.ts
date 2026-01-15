@@ -4,6 +4,8 @@ import ArticleType from "../models/ArticleType";
 import { removeLocalFile } from "../utils/removeFile";
 import { uploadImageToCloudinary } from "../utils/cloudinary";
 
+import sharp from "sharp";
+
 export const createArticleType = async (req: Request, res: Response) => {
   let filePath: string | undefined;
 
@@ -27,13 +29,27 @@ export const createArticleType = async (req: Request, res: Response) => {
 
     if (slug) data.slug = slug; // schema auto-generates if missing
 
-    /* ===== IMAGE UPLOAD ===== */
+    /* ===== IMAGE UPLOAD + RESIZE ===== */
     if (req.file) {
       filePath = req.file.path;
+      const compressedPath = `${filePath}-resized.webp`;
 
-      const upload = await uploadImageToCloudinary(filePath, "article-types");
+      // Resize & compress
+      await sharp(filePath)
+        .resize(800, 800, { fit: "inside" }) // max 800x800
+        .webp({ quality: 80 }) // compress to WebP
+        .toFile(compressedPath);
 
+      // Upload compressed image to Cloudinary
+      const upload = await uploadImageToCloudinary(
+        compressedPath,
+        "article-types"
+      );
       data.image = upload.secure_url;
+
+      // Remove temp files
+      removeLocalFile(filePath);
+      removeLocalFile(compressedPath);
     }
 
     const articleType = await ArticleType.create(data);
@@ -42,10 +58,51 @@ export const createArticleType = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Create ArticleType Error:", error);
     return response(res, 500, "Internal Server Error");
-  } finally {
-    if (filePath) removeLocalFile(filePath);
   }
 };
+
+// export const createArticleType = async (req: Request, res: Response) => {
+//   let filePath: string | undefined;
+
+//   try {
+//     const { name, description, slug, isActive } = req.body;
+
+//     if (!name?.trim()) {
+//       return response(res, 400, "Article Type name is required");
+//     }
+
+//     const existing = await ArticleType.findOne({ name: name.trim() });
+//     if (existing) {
+//       return response(res, 409, "Article Type with this name already exists");
+//     }
+
+//     const data: any = {
+//       name: name.trim(),
+//       description: description || "",
+//       isActive: isActive !== "false",
+//     };
+
+//     if (slug) data.slug = slug; // schema auto-generates if missing
+
+//     /* ===== IMAGE UPLOAD ===== */
+//     if (req.file) {
+//       filePath = req.file.path;
+
+//       const upload = await uploadImageToCloudinary(filePath, "article-types");
+
+//       data.image = upload.secure_url;
+//     }
+
+//     const articleType = await ArticleType.create(data);
+
+//     return response(res, 201, "Article Type created successfully", articleType);
+//   } catch (error) {
+//     console.error("Create ArticleType Error:", error);
+//     return response(res, 500, "Internal Server Error");
+//   } finally {
+//     if (filePath) removeLocalFile(filePath);
+//   }
+// };
 
 // Get all Article Type
 export const getAllArticleTypes = async (req: Request, res: Response) => {

@@ -96,7 +96,7 @@ const SeasonPage: React.FC = () => {
         if (!confirm("Are you sure you want to delete this season?")) return;
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/seasons/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/season/${id}`, {
                 method: "DELETE",
                 credentials: "include",
             });

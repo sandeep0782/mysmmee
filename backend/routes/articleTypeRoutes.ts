@@ -10,6 +10,10 @@ router.post(
   "/",
   authenticateUser,
   singleFileUpload("article-types").single("image"),
+  (req, res, next) => {
+    // multer stores file here
+    next();
+  },
   ArticleTypes.createArticleType
 );
 
@@ -26,5 +30,6 @@ router.put(
 );
 /* DELETE */
 router.delete("/:id", authenticateUser, ArticleTypes.deleteArticleType);
+
 
 export default router;
