@@ -5,16 +5,23 @@ import {
   sendCampaignController,
   TestTemplate,
 } from "../controllers/advertiseController";
+import { authenticateUser } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/", getAllCampaigns);
+router.get("/", authenticateUser, getAllCampaigns);
 
-router.post("/send-advertisement/:productId", advertiseController);
+router.post(
+  "/send-advertisement/:productId",
+  authenticateUser,
+  advertiseController
+);
 
-router.post("/send-campaign/:campaignId", sendCampaignController);
-
-router.post("/test-template/:productId", TestTemplate);
-
+router.post(
+  "/send-campaign/:campaignId",
+  authenticateUser,
+  sendCampaignController
+);
+router.post("/test-template/:productId", authenticateUser, TestTemplate);
 
 export default router;

@@ -1,11 +1,13 @@
 import express from "express";
-import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser } from "../middleware/authMiddleware";
 import * as SeasonController from "../controllers/seasonController";
 
 const router = express.Router();
 
-// Routes
-router.get("/", authenticateUser, SeasonController.getAllSeasons);
+// Public Routes
+router.get("/", SeasonController.getAllSeasons);
+
+// Private Routes
 router.get("/:id", authenticateUser, SeasonController.getSeasonById);
 router.post("/", authenticateUser, SeasonController.createSeason);
 router.put("/:id", authenticateUser, SeasonController.updateSeason);

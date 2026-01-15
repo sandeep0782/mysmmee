@@ -1,17 +1,16 @@
 import { Router } from "express";
 import * as brandController from "../controllers/brandController";
-// import { authenticateUser } from '../middleware/authMiddleware';
+import { authenticateUser } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/",brandController.createBrand);
-
+// Public Route
 router.get("/", brandController.getAllBrands);
 
-router.get("/:id" , brandController.getBrandById);
-
-router.put("/:id" , brandController.updateBrand);
-
-router.delete("/:id" , brandController.deleteBrand);
+// Private Routes
+router.post("/", authenticateUser, brandController.createBrand);
+router.get("/:id", authenticateUser, brandController.getBrandById);
+router.put("/:id", authenticateUser, brandController.updateBrand);
+router.delete("/:id", authenticateUser, brandController.deleteBrand);
 
 export default router;
