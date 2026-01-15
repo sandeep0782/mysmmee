@@ -14,7 +14,7 @@ router.post(
 );
 
 /* READ */
-router.get("/", authenticateUser, ArticleTypes.getAllArticleTypes);
+router.get("/", ArticleTypes.getAllArticleTypes);
 router.get("/:id", authenticateUser, ArticleTypes.getArticleTypeById);
 
 /* UPDATE */
