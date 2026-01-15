@@ -32,6 +32,6 @@ export const singleFileUpload = (folderName: string) => {
         cb(new Error("Only JPG, JPEG, PNG, WEBP images are allowed"));
       }
     },
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+    limits: { fileSize: 50 * 1024 * 1024 }, // 10 MB
   });
 };
