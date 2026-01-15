@@ -25,6 +25,7 @@ import advertiseRoutes from "./routes/advertiseRoutes";
 import path from "path";
 import "./services/cron"; // ✅ make sure cron runs
 import articleTypeRoutes from "./routes/articleTypeRoutes";
+import { getProductMenu } from "./controllers/menuController";
 
 dotenv.config();
 
@@ -71,6 +72,8 @@ app.use("/api/admin", adminRoute);
 app.use("/api", importRoutes); // Now POST /api/products/import works
 app.use("/api", importUserRoutes);
 app.use("/api/email-campaigns", advertiseRoutes);
+
+app.use("/api/menu", getProductMenu);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

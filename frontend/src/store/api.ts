@@ -1,3 +1,4 @@
+import { MenuCategory } from "@/types/type";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -22,6 +23,8 @@ const API_URLS = {
   ARTICLETYPE: `${BASE_URL}/api/articleTypes`,
   COLORS: `${BASE_URL}/api/colors`,
   SEASONS: `${BASE_URL}/api/season`,
+
+  MENU: `${BASE_URL}/api/menu`,
 
   // Product related URLs
   PRODUCTS: `${BASE_URL}/api/products`,
@@ -126,6 +129,11 @@ export const api = createApi({
         method: "PUT",
         body: userData,
       }),
+    }),
+
+    getMenu: builder.query<MenuCategory[], void>({
+      query: () => API_URLS.MENU,
+      providesTags: ["Category"],
     }),
 
     getBrands: builder.query({
@@ -357,4 +365,6 @@ export const {
   useCreateSeasonMutation,
 
   useGetProductBySlugQuery,
+
+  useGetMenuQuery,
 } = api;

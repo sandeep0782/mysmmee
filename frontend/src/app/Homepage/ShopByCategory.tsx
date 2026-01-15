@@ -88,7 +88,7 @@ const ShopByCategory = () => {
                           className="w-40 h-60 relative overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
                         >
                           <Link
-                            href={`/products?articleType=${category._id}`}
+                            href={`/products?articleType=${category.slug}`}
                             className="block w-full h-full"
                           >
                             {/* Image container */}

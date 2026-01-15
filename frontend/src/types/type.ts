@@ -110,3 +110,16 @@ export interface ArticleType {
   name: string;
   slug?: string;
 }
+
+export interface SubCategory {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface MenuCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  articleTypes: ArticleType[];
+}

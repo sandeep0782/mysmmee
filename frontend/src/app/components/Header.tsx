@@ -37,6 +37,7 @@ import { logout, toggleLoginDialog } from "@/store/slices/userSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import toast from "react-hot-toast";
 import { setCart } from "@/store/slices/cartSlice";
+import MainMenu from "./Menu";
 
 export default function Header() {
   const isLoginOpen = useSelector(
@@ -231,6 +232,7 @@ export default function Header() {
             MYSMME
           </span>
         </Link>
+        <MainMenu />
         <div className="flex flex-1 items-center justify-center max-w-xl px-4">
           <div className="relative w-full">
             <Input

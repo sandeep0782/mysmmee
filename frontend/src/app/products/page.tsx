@@ -50,6 +50,7 @@ const Products = () => {
 
     const searchParams = useSearchParams()
     const articleTypeSlug = searchParams.get('articleType'); // e.g., "kurta"
+    const categorySlug = searchParams.get('category'); // "men" or "women"
 
     const genderParam = searchParams.get("gender"); // e.g., "men"
 
@@ -95,11 +96,10 @@ const Products = () => {
             selectedColor.includes(product.color?._id);
 
         const categoryMatch =
-            selectedCategory.length === 0 ||
-            selectedCategory.includes(product.category?._id);
+            !categorySlug || product.category?.slug === categorySlug;
 
         const articleTypeMatch =
-            !articleTypeSlug || product.articleType?._id === articleTypeSlug; // ✅ filter by slug
+            !articleTypeSlug || product.articleType?.slug === articleTypeSlug; // ✅ filter by slug
 
 
 
