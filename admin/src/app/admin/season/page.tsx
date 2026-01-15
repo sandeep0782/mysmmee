@@ -59,7 +59,7 @@ const SeasonPage: React.FC = () => {
         try {
             const url = editingId
                 ? `${process.env.NEXT_PUBLIC_API_URL}/api/season/ ${editingId} `
-                : `${process.env.NEXT_PUBLIC_API_URL} /api/season`;
+                : `${process.env.NEXT_PUBLIC_API_URL}/api/season`;
             const method = editingId ? "PUT" : "POST";
 
             const res = await fetch(url, {
