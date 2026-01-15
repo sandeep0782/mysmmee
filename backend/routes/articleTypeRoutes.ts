@@ -2,7 +2,6 @@ import express from "express";
 import { authenticateUser } from "../middleware/authMiddleware";
 import * as ArticleTypes from "../controllers/articleTypeController";
 import { singleFileUpload } from "../utils/commonSingleUpload";
-import upload from "../config/articleType/multer";
 
 const router = express.Router();
 
@@ -18,11 +17,6 @@ router.post(
   ArticleTypes.createArticleType
 );
 
-router.post(
-  "/article-type",
-  upload.single("image"),
-  ArticleTypes.createArticleType
-);
 
 /* READ */
 router.get("/", ArticleTypes.getAllArticleTypes);

@@ -6,53 +6,10 @@ import { uploadImageToCloudinary } from "../utils/cloudinary";
 
 import sharp from "sharp";
 import fs from "fs";
-import cloudinary from "../config/articleType/cloudinary";
+
 
 
 export const createArticleType = async (req: Request, res: Response) => {
-  try {
-    const { name, description } = req.body;
-
-    let imageUrl: string | undefined;
-
-    if (req.file) {
-      // Convert image to WebP
-      const webpBuffer = await sharp(req.file.buffer)
-        .webp({ quality: 80 })
-        .toBuffer();
-
-      // Upload to Cloudinary
-      const uploadResult = await new Promise<any>((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "article_types" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(webpBuffer);
-      });
-
-      imageUrl = uploadResult.secure_url;
-    }
-
-    const articleType = new ArticleType({
-      name,
-      description,
-      image: imageUrl,
-    });
-
-    await articleType.save();
-
-    res.status(201).json({ success: true, data: articleType });
-  } catch (err: any) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-
-export const createArticleTypes = async (req: Request, res: Response) => {
   let filePath: string | undefined;
 
   try {
