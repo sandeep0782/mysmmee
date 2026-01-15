@@ -5,58 +5,87 @@ import { removeLocalFile } from "../utils/removeFile";
 import { uploadImageToCloudinary } from "../utils/cloudinary";
 
 import sharp from "sharp";
+import fs from "fs";
 
 export const createArticleType = async (req: Request, res: Response) => {
   let filePath: string | undefined;
 
   try {
-    const { name, description, slug, isActive } = req.body;
+    const { name, description, slug } = req.body; // removed isActive
 
+    // 1️⃣ Validate name
     if (!name?.trim()) {
       return response(res, 400, "Article Type name is required");
     }
 
+    // 2️⃣ Check if name already exists
     const existing = await ArticleType.findOne({ name: name.trim() });
     if (existing) {
       return response(res, 409, "Article Type with this name already exists");
     }
 
+    // 3️⃣ Check if image is provided
+    if (!req.file) {
+      return response(res, 400, "Image is required for Article Type");
+    }
+
     const data: any = {
       name: name.trim(),
       description: description || "",
-      isActive: isActive !== "false",
+      isActive: true, // set active by default
     };
 
-    if (slug) data.slug = slug; // schema auto-generates if missing
+    if (slug) data.slug = slug;
 
-    /* ===== IMAGE UPLOAD + RESIZE ===== */
-    if (req.file) {
-      filePath = req.file.path;
-      const compressedPath = `${filePath}-resized.webp`;
+    /* ===== IMAGE SIZE VALIDATION + COMPRESSION ===== */
+    filePath = req.file.path;
 
-      // Resize & compress
-      await sharp(filePath)
-        .resize(800, 800, { fit: "inside" }) // max 800x800
-        .webp({ quality: 80 }) // compress to WebP
-        .toFile(compressedPath);
+    // 4️⃣ Check original file size
+    const stats = fs.statSync(filePath);
+    const fileSizeInMB = stats.size / (1024 * 1024);
+    const maxSizeMB = 20;
 
-      // Upload compressed image to Cloudinary
-      const upload = await uploadImageToCloudinary(
-        compressedPath,
-        "article-types"
-      );
-      data.image = upload.secure_url;
-
-      // Remove temp files
+    if (fileSizeInMB > maxSizeMB) {
       removeLocalFile(filePath);
-      removeLocalFile(compressedPath);
+      return response(
+        res,
+        400,
+        `Image too large. Maximum allowed size is ${maxSizeMB} MB.`
+      );
     }
 
+    // 5️⃣ Compress image without resizing (keep dimensions)
+    const compressedPath = `${filePath}-compressed.webp`;
+    await sharp(filePath)
+      .webp({ quality: 60 }) // reduce file size
+      .toFile(compressedPath);
+
+    const compressedStats = fs.statSync(compressedPath);
+    console.log(
+      `Original: ${fileSizeInMB.toFixed(2)} MB, Compressed: ${(
+        compressedStats.size /
+        (1024 * 1024)
+      ).toFixed(2)} MB`
+    );
+
+    // 6️⃣ Upload compressed image to Cloudinary
+    const upload = await uploadImageToCloudinary(
+      compressedPath,
+      "article-types"
+    );
+    data.image = upload.secure_url;
+
+    // 7️⃣ Remove temporary files
+    removeLocalFile(filePath);
+    removeLocalFile(compressedPath);
+
+    // 8️⃣ Create article type in DB
     const articleType = await ArticleType.create(data);
 
     return response(res, 201, "Article Type created successfully", articleType);
   } catch (error) {
     console.error("Create ArticleType Error:", error);
+    if (filePath) removeLocalFile(filePath);
     return response(res, 500, "Internal Server Error");
   }
 };
