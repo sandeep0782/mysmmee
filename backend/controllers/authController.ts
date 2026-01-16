@@ -8,7 +8,7 @@ import {
 import { response } from "../utils/responseHandler";
 import { generateToken } from "../utils/generateToken";
 
-const isProd = process.env.NODE_ENV
+const isProd = process.env.NODE_ENV === "production";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -106,10 +106,13 @@ export const registerVendor = async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.error(error);
-    return response(res, 500, "An error occurred during registration. Please try again.");
+    return response(
+      res,
+      500,
+      "An error occurred during registration. Please try again."
+    );
   }
 };
-
 
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
@@ -125,10 +128,10 @@ export const verifyEmail = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "lax", // needed for cross-site (frontend and backend on different domains)
-      secure: false, // HTTPS only
-      // domain: ".mysmme.com", // your domain
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+      domain: isProd ? ".mysmme.com" : undefined,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     await user.save();
@@ -201,10 +204,10 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-      // domain: ".mysmme.com",
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd, // must be HTTPS in production, false for localhost
+      domain: isProd ? ".mysmme.com" : undefined, // only set domain in production
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
     });
 
     return response(res, 200, "Login successful", {
@@ -337,9 +340,8 @@ export const logout = async (_: Request, res: Response) => {
     // Clear the access token cookie
     res.clearCookie("access_token", {
       httpOnly: true,
-      sameSite: "lax", // must match the login cookie
-      secure: false, // must match the login cookie
-      // domain: ".mysmme.com", // must match the login cookie
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
     });
     return response(res, 200, "Successfully logged out.");
   } catch (error) {
