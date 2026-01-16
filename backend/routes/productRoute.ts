@@ -8,10 +8,10 @@ const router = express.Router();
 
 // Public Routes
 router.get("/", productController.getAllProducts);
+router.get("/slug/:slug", productController.getProductBySlug);
 
 // Private Routes
 router.get("/:id", authenticateUser, productController.getProductById);
-router.get("/slug/:slug", authenticateUser, productController.getProductBySlug);
 router.post(
   "/",
   authenticateUser,

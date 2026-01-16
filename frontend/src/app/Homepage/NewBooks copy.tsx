@@ -158,7 +158,7 @@ const NewBooks = () => {
               </div>
             </>
           ) : (
-            <p className="text-center text-gray-500">No books to display.</p>
+            <p className="text-center text-gray-500">No products to display.</p>
           )}
         </div>
       </div>

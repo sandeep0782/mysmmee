@@ -328,10 +328,10 @@ export default function BooksPage() {
             ) : (
               <NoData
                 imageUrl="/images/no-book.jpg"
-                message="No books available please try later."
+                message="No products are available please try later."
                 description="Try adjusting your filters or search criteria to find what you're looking for."
-                onClick={() => router.push("/book-sell")}
-                buttonText="Shell Your First Book"
+                // onClick={() => router.push("/book-sell")}
+                // buttonText="Shell Your First Book"
               />
             )}
           </div>

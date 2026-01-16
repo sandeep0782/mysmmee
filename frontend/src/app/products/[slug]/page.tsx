@@ -103,10 +103,10 @@ const page = () => {
             <div className="my-10 max-w-3xl justify-center mx-auto">
                 <NoData
                     imageUrl="/images/no-book.jpg"
-                    message="No books available. Please try again later."
+                    message="No products available. Please try again later."
                     description="Try adjusting your filters or check back soon for available listings."
-                    onClick={() => router.push("/")}
-                    buttonText="Sell your books"
+                    // onClick={() => router.push("/")}
+                    // buttonText="Sell your books"
                 />
             </div>
         )
