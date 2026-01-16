@@ -234,21 +234,21 @@ export default function Header() {
         </Link>
         <MainMenu />
         <div className="flex flex-1 items-center justify-center max-w-xl px-4">
-          <div className="relative w-full">
+          <div className="flex w-full max-w-2xl">
+            {/* Search Input */}
             <Input
               type="text"
-              placeholder="Product Name  /  Brand  /  Seller  "
-              className="w-full pr-10"
+              placeholder="Product Name / Brand / Seller / Style Id"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className=" rounded-l-full rounded-r-none border border-gray-200 h-11 pl-5 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
+            {/* Search Button */}
             <Button
-              size="icon"
-              variant="ghost"
-              className="absolute right-0 top-1/2 -translate-y-1/2"
               onClick={handleSearch}
+              className=" rounded-r-full rounded-l-none bg-gray-100 border border-l-0 border-gray-300 hover:bg-gray-200 h-11 px-6"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-5 w-5 text-gray-700" />
             </Button>
           </div>
         </div>
