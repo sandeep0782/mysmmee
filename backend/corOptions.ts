@@ -4,10 +4,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 const allowedOrigins = isProd
   ? [process.env.FRONTEND_URL!, process.env.ADMIN_URL!]
-  : [
-      "http://localhost:3000",
-      "http://localhost:5000",
-    ];
+  : ["http://localhost:3000", "http://localhost:5000"];
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
@@ -19,8 +16,8 @@ const corsOptions: cors.CorsOptions = {
       callback(new Error(`CORS policy: Origin ${origin} not allowed`));
     }
   },
-  credentials: true, 
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], 
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
