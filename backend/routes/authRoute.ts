@@ -9,6 +9,7 @@ import { loginLimiter } from "../middleware/loginLimiter";
 const router = Router();
 
 router.post("/register", authController.register);
+router.post("/vendor/register", authController.registerVendor);
 router.post("/login", loginLimiter, authController.login);
 router.get("/verify-email/:token", authController.verifyEmail);
 router.post("/forgot-password", loginLimiter, authController.forgotPassword);

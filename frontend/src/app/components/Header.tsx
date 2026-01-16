@@ -253,7 +253,7 @@ export default function Header() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/book-sell">
+          <Link href="http://localhost:5000" passHref>
             <Button
               variant="secondary"
               className="bg-primary hover:bg-primary_hover text-white"
@@ -261,6 +261,7 @@ export default function Header() {
               Start Selling
             </Button>
           </Link>
+
 
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
@@ -333,23 +334,24 @@ export default function Header() {
           />
         </Link>
         <div className="flex-1 px-4">
-          <div className="relative w-full">
+          <div className="flex w-full max-w-md mx-auto md:mx-0">
             <Input
               type="text"
-              placeholder="Search books..."
-              className="w-full pr-10"
+              placeholder="Search products..."
+              className="flex-1 rounded-l-full rounded-r-none border border-gray-200 h-11 pl-4 text-sm focus:ring-0 focus:ring-offset-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <Button
               size="icon"
               variant="ghost"
-              className="absolute right-0 top-1/2 -translate-y-1/2"
+              className="rounded-r-full rounded-l-none bg-gray-100 border border-l-0 border-gray-300 hover:bg-gray-200 h-11 px-4"
               onClick={handleSearch}
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-5 w-5 text-gray-700" />
             </Button>
           </div>
+
         </div>
         <Link href="/checkout/cart">
           <Button variant="ghost" className="relative">
@@ -365,6 +367,6 @@ export default function Header() {
 
       {/* Login/Signup Dialog */}
       <Login isLoginOpen={isLoginOpen} setIsLoginOpen={handleLoginClick} />
-    </header>
+    </header >
   );
 }

@@ -28,21 +28,24 @@ const Login: React.FC = () => {
                 credentials: "include",
                 body: JSON.stringify(data),
             });
+            console.log("response status", res.status)
             const result = await res.json();
             if (res.ok && result.data?.user) {
                 const role = result.data.user.role;
-
+                console.log(role)
                 if (role === "admin") {
-                    router.push("/admin/dashboard");
+                    router.replace("/admin/dashboard");
                 } else {
-                    router.push("/user/dashboard");
+                    router.replace("/user/dashboard");
                 }
+
             } else {
                 toast.error(result.message || "Login failed");
             }
 
         } catch (err) {
             toast.error("Internal Server Error");
+            console.log(err)
         } finally {
             setLoading(false);
         }
@@ -53,13 +56,15 @@ const Login: React.FC = () => {
             <div className="w-full max-w-md bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-8">
                 {/* Logo */}
                 <div className="flex flex-col items-center mb-8">
-                    <Image
-                        src="/images/logo.png"
-                        alt="MYSMME Logo"
-                        width={56}
-                        height={56}
-                        priority
-                    />
+                    <Link href="/" className="flex items-center">
+                        <Image
+                            src="/images/logo.png"
+                            alt="MYSMME Logo"
+                            width={56}
+                            height={56}
+                            priority
+                        />
+                    </Link>
                     <h1 className="mt-4 text-2xl font-semibold text-gray-900">
                         Welcome back
                     </h1>

@@ -18,6 +18,7 @@ export interface IUser extends Document {
   loginAttempts?: number;
   lockUntil?: Date;
   role: "user" | "freelancer" | "vendor" | "admin" | "super-admin";
+  gst: { type: String; default: null };
 }
 
 const userSchema = new Schema<IUser>(
@@ -41,6 +42,7 @@ const userSchema = new Schema<IUser>(
     },
     loginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date },
+    gst: { type: String, default: null },
   },
   { timestamps: true }
 );

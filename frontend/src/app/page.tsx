@@ -112,13 +112,13 @@ export default function Homepage() {
 
 
       {/* shop By Category Section */}
-      <ShopByBrands />
-
+      <ShopByCategory />
+      
       {/* Newly Added Books Section */}
       <NewBooks />
 
       {/* shop By Category Section */}
-      <ShopByCategory />
+      <ShopByBrands />
       <Button
         size="lg"
         className="flex mt-10 mb-10 mx-auto bg-primary hover:bg-primary_hover px-8 py-6 rounded-xl"

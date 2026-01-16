@@ -52,7 +52,7 @@ const ShopByBrands = () => {
 
     return (
         <section className="py-16 bg-yellow-50">
-            <div className="container mx-auto px-4">
+            <div className="w-[95%] mx-auto px-4">
                 <h2 className="text-3xl font-bold mb-12 uppercase tracking-widest">
                     Shop by <span className="text-primary">Brand</span>
                 </h2>

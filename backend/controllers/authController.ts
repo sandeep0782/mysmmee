@@ -8,6 +8,8 @@ import {
 import { response } from "../utils/responseHandler";
 import { generateToken } from "../utils/generateToken";
 
+const isProd = process.env.NODE_ENV
+
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, agreeTerms } = req.body;
@@ -48,6 +50,67 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+import fs from "fs";
+import path from "path";
+
+export const registerVendor = async (req: Request, res: Response) => {
+  try {
+    const {
+      name,
+      businessName,
+      email,
+      phoneNumber,
+      address,
+      gst,
+      password,
+      agreeTerms,
+    } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return response(res, 400, "Vendor already exists");
+    }
+
+    // let logoPath = null;
+
+    // Handle file upload (if using multer or similar)
+    // if (req.file) {
+    //   const fileName = `${Date.now()}-${req.file.originalname}`;
+    //   logoPath = `/uploads/logos/${fileName}`;
+    //   fs.writeFileSync(path.join(process.cwd(), "public", "uploads", "logos", fileName), req.file.buffer);
+    // }
+
+    const verificationToken = crypto.randomBytes(20).toString("hex");
+
+    const vendor = new User({
+      name,
+      businessName,
+      email,
+      phoneNumber,
+      address,
+      gst,
+      password,
+      agreeTerms,
+      role: "vendor",
+      verificationToken,
+    });
+
+    await vendor.save();
+
+    await sendVerificationEmail(email, verificationToken, name);
+
+    return response(
+      res,
+      201,
+      "Vendor registration successful. Please check your email to verify your account."
+    );
+  } catch (error) {
+    console.error(error);
+    return response(res, 500, "An error occurred during registration. Please try again.");
+  }
+};
+
+
 export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
@@ -64,7 +127,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       httpOnly: true,
       sameSite: "lax", // needed for cross-site (frontend and backend on different domains)
       secure: false, // HTTPS only
-      domain: ".mysmme.com", // your domain
+      // domain: ".mysmme.com", // your domain
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
@@ -140,7 +203,7 @@ export const login = async (req: Request, res: Response) => {
       httpOnly: true,
       sameSite: "lax",
       secure: false,
-      domain: ".mysmme.com",
+      // domain: ".mysmme.com",
       maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
     });
 
@@ -276,7 +339,7 @@ export const logout = async (_: Request, res: Response) => {
       httpOnly: true,
       sameSite: "lax", // must match the login cookie
       secure: false, // must match the login cookie
-      domain: ".mysmme.com", // must match the login cookie
+      // domain: ".mysmme.com", // must match the login cookie
     });
     return response(res, 200, "Successfully logged out.");
   } catch (error) {
