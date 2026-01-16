@@ -1,14 +1,16 @@
 import cors from "cors";
 
-const isProd = process.env.NODE_ENV === "production";
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  "http://192.168.1.25:5000",
+];
 
-const allowedOrigins = isProd
-  ? [process.env.FRONTEND_URL!, process.env.ADMIN_URL!]
-  : ["http://localhost:3000", "http://localhost:5000"];
-
+// Dynamic CORS options
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow Postman / server-to-server
+    // allow requests with no origin (like Postman or server-to-server)
+    if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -16,9 +18,9 @@ const corsOptions: cors.CorsOptions = {
       callback(new Error(`CORS policy: Origin ${origin} not allowed`));
     }
   },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // allow cookies and authorization headers
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // allowed HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"], // allowed headers
 };
 
 export default corsOptions;

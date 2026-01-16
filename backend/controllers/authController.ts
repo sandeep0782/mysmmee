@@ -8,8 +8,6 @@ import {
 import { response } from "../utils/responseHandler";
 import { generateToken } from "../utils/generateToken";
 
-const isProd = process.env.NODE_ENV === "production";
-
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, agreeTerms } = req.body;
@@ -128,10 +126,10 @@ export const verifyEmail = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax",
-      secure: isProd,
-      domain: isProd ? ".mysmme.com" : undefined,
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none", // needed for cross-site (frontend and backend on different domains)
+      secure: true, // HTTPS only
+      domain: ".mysmme.com", // your domain
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
     await user.save();
@@ -204,10 +202,10 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax",
-      secure: isProd, // must be HTTPS in production, false for localhost
-      domain: isProd ? ".mysmme.com" : undefined, // only set domain in production
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
+      sameSite: "none",
+      secure: true,
+      domain: ".mysmme.com",
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
     });
 
     return response(res, 200, "Login successful", {
@@ -340,8 +338,10 @@ export const logout = async (_: Request, res: Response) => {
     // Clear the access token cookie
     res.clearCookie("access_token", {
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax",
-      secure: isProd,
+      sameSite: "none", // must match the login cookie
+      secure: true, // must match the login cookie
+      domain: ".mysmme.com", // must match the login cookie
+      path: "/", // must match login
     });
     return response(res, 200, "Successfully logged out.");
   } catch (error) {
