@@ -21,7 +21,7 @@ import { addToCart } from '@/store/slices/cartSlice'
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { ShareButton } from '@/app/components/Share'
 import ZoomImage from '@/app/components/ZoomImage'
-import { DELIVERABLE_PINCODES } from '@/constant/deliveryPincode'
+// import { DELIVERABLE_PINCODES } from '@/constant/deliveryPincode'
 
 const page = () => {
     const { slug } = useParams()
@@ -42,10 +42,10 @@ const page = () => {
     const cartItems = useSelector((state: RootState) => state.cart.items)
     const isInCart = product && cartItems?.some(item => item.product._id === product._id)
 
-    const [pinCode, setPinCode] = useState("")
-    const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null)
-    const [isDeliverable, setIsDeliverable] = useState<boolean | null>(null)
-    const DELIVERABLE_PINCODES_SET = new Set(DELIVERABLE_PINCODES);
+    // const [pinCode, setPinCode] = useState("")
+    // const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null)
+    // const [isDeliverable, setIsDeliverable] = useState<boolean | null>(null)
+    // const DELIVERABLE_PINCODES_SET = new Set(DELIVERABLE_PINCODES);
 
 
     useEffect(() => {
@@ -132,22 +132,22 @@ const page = () => {
 
     const handleSelect = (id: string) => setSelectedSize(id)
 
-    const handleCheckDelivery = () => {
-        const pin = pinCode.trim();
-        if (!pin || pin.length !== 6) {
-            setDeliveryMessage("Please enter a valid 6-digit PIN code");
-            setIsDeliverable(false);
-            return;
-        }
+    // const handleCheckDelivery = () => {
+    //     const pin = pinCode.trim();
+    //     if (!pin || pin.length !== 6) {
+    //         setDeliveryMessage("Please enter a valid 6-digit PIN code");
+    //         setIsDeliverable(false);
+    //         return;
+    //     }
 
-        if (DELIVERABLE_PINCODES_SET.has(pin)) {
-            setDeliveryMessage("Delivery available at this PIN code ✅");
-            setIsDeliverable(true);
-        } else {
-            setDeliveryMessage("Sorry, delivery is not available at this location ❌");
-            setIsDeliverable(false);
-        }
-    };
+    //     if (DELIVERABLE_PINCODES_SET.has(pin)) {
+    //         setDeliveryMessage("Delivery available at this PIN code ✅");
+    //         setIsDeliverable(true);
+    //     } else {
+    //         setDeliveryMessage("Sorry, delivery is not available at this location ❌");
+    //         setIsDeliverable(false);
+    //     }
+    // };
     return (
         <div className="min-h-screen">
             <div className="container mx-auto px-4 py-8">
@@ -374,7 +374,7 @@ const page = () => {
                                 <Truck className="h-5 w-5 text-gray-900" strokeWidth={1} />
                             </div>
                             <div className="relative w-full">
-                                <div className="relative w-full">
+                                {/* <div className="relative w-full">
                                     <input
                                         type="text"
                                         placeholder="Enter Pin Code"
@@ -398,7 +398,7 @@ const page = () => {
                                     >
                                         {deliveryMessage}
                                     </p>
-                                )}
+                                )} */}
 
                             </div>
                             <div className="text-gray-600">Please enter PIN code to check delivery time & Pay on Delivery Availability</div>
