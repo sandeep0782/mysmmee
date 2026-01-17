@@ -20,6 +20,8 @@ import { useAddToCartMutation, useAddToWishlistMutation, useGetProductBySlugQuer
 import { addToCart } from '@/store/slices/cartSlice'
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { ShareButton } from '@/app/components/Share'
+import ZoomImage from '@/app/components/ZoomImage'
+import { DELIVERABLE_PINCODES } from '@/constant/deliveryPincode'
 
 const page = () => {
     const { slug } = useParams()
@@ -39,6 +41,11 @@ const page = () => {
 
     const cartItems = useSelector((state: RootState) => state.cart.items)
     const isInCart = product && cartItems?.some(item => item.product._id === product._id)
+
+    const [pinCode, setPinCode] = useState("")
+    const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null)
+    const [isDeliverable, setIsDeliverable] = useState<boolean | null>(null)
+    const DELIVERABLE_PINCODES_SET = new Set(DELIVERABLE_PINCODES);
 
 
     useEffect(() => {
@@ -105,8 +112,8 @@ const page = () => {
                     imageUrl="/images/no-book.jpg"
                     message="No products available. Please try again later."
                     description="Try adjusting your filters or check back soon for available listings."
-                    // onClick={() => router.push("/")}
-                    // buttonText="Sell your books"
+                // onClick={() => router.push("/")}
+                // buttonText="Sell your books"
                 />
             </div>
         )
@@ -125,6 +132,22 @@ const page = () => {
 
     const handleSelect = (id: string) => setSelectedSize(id)
 
+    const handleCheckDelivery = () => {
+        const pin = pinCode.trim();
+        if (!pin || pin.length !== 6) {
+            setDeliveryMessage("Please enter a valid 6-digit PIN code");
+            setIsDeliverable(false);
+            return;
+        }
+
+        if (DELIVERABLE_PINCODES_SET.has(pin)) {
+            setDeliveryMessage("Delivery available at this PIN code ✅");
+            setIsDeliverable(true);
+        } else {
+            setDeliveryMessage("Sorry, delivery is not available at this location ❌");
+            setIsDeliverable(false);
+        }
+    };
     return (
         <div className="min-h-screen">
             <div className="container mx-auto px-4 py-8">
@@ -171,16 +194,18 @@ const page = () => {
                                         <Loader2 className="animate-spin h-6 w-6 text-gray-400" />
                                     </div>
                                 )}
-                                <Image
+                                <ZoomImage
+                                    key={index}
+
                                     src={image as string}
                                     alt={`${product.title} ${index + 1}`}
-                                    // width={400} // thumbnail size
-                                    // height={533} // maintain 3:4 ratio
-                                    fill
-                                    className="w-full h-full object-cover transition-transform duration-300 ease-in hover:scale-105"
-                                    placeholder="blur"
-                                    blurDataURL="/images/placeholder.png" // low-res blurred image
-                                    sizes="(max-width: 768px) 100vw, 50vw" // responsive sizing
+                                // width={400} // thumbnail size
+                                // height={533} // maintain 3:4 ratio
+                                // fill
+                                // className="w-full h-full object-cover transition-transform duration-300 ease-in hover:scale-105"
+                                // placeholder="blur"
+                                // blurDataURL="/images/placeholder.png" // low-res blurred image
+                                // sizes="(max-width: 768px) 100vw, 50vw" // responsive sizing
                                 />
                             </div>
                         ))}
@@ -229,7 +254,7 @@ const page = () => {
                             </div>
 
                             {/* Size Selection */}
-                            
+
                             <div className="flex gap-4 font-bold">
                                 <div>SELECT SIZE</div>
                                 <div className="text-red-500 cursor-pointer">SIZE CHART &gt;</div>
@@ -340,7 +365,6 @@ const page = () => {
                                             : "Add to Wishlist"}
                                     </span>
                                 </button>
-
                             </div>
 
                             {/* Delivery & Info */}
@@ -350,14 +374,32 @@ const page = () => {
                                 <Truck className="h-5 w-5 text-gray-900" strokeWidth={1} />
                             </div>
                             <div className="relative w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Enter Pin Code"
-                                    className="w-full px-3 py-2 pr-24 border border-gray-300 rounded-md focus:outline-none focus:ring-0"
-                                />
-                                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500 font-semibold px-3 py-1 cursor-pointer">
-                                    Check
-                                </button>
+                                <div className="relative w-full">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Pin Code"
+                                        value={pinCode}
+                                        onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ""))}
+                                        maxLength={6}
+                                        className="w-full px-3 py-2 pr-24 border border-gray-300 rounded-md focus:outline-none focus:ring-0"
+                                    />
+                                    <button
+                                        onClick={handleCheckDelivery}
+                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500 font-semibold px-3 py-1 cursor-pointer"
+                                    >
+                                        Check
+                                    </button>
+                                </div>
+
+                                {deliveryMessage && (
+                                    <p
+                                        className={`text-sm mt-2 ${isDeliverable ? "text-green-600" : "text-red-500"
+                                            }`}
+                                    >
+                                        {deliveryMessage}
+                                    </p>
+                                )}
+
                             </div>
                             <div className="text-gray-600">Please enter PIN code to check delivery time & Pay on Delivery Availability</div>
                             <div className="flex flex-col gap-2 text-sm text-gray-700">
