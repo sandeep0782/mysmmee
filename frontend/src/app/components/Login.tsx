@@ -95,6 +95,10 @@ const Login: React.FC<LoginProps> = ({ isLoginOpen, setIsLoginOpen }) => {
         toast.error("Login failed.Please try again.");
       }
     } catch (error) {
+      const err = error as { status?: number; data?: { message?: string } };
+      if (err?.status === 429) {
+        toast.error("Too many incorrect login attempts. Please try after 15 minutes.");
+      }
       toast.error("Email or password incorrect");
     } finally {
       setLoginLoading(false);

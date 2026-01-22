@@ -227,26 +227,18 @@ const page = () => {
 
                     {/* Product Details Section */}
                     <div className="space-y-6">
-                        {/* Title & Brand */}
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-2">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
                                 <h1 className="text-2xl font-bold">{product.brand?.name}</h1>
-                                <h1 className="text-gray-500 text-2xl font-semibold">{product.description}</h1>
-                                <p className="text-sm text-muted-foreground">Posted: {formatDate(product.createdAt)}</p>
-                            </div>
-                            <div className="flex gap-2">
                                 <ShareButton
                                     url={`${window.location.origin}/products/${product._id}`}
-                                    title={`check out this product:${product.title}`}
-                                    text={`I found a beautiful product on MYSMME:${product.title}`}
+                                    title={`Check out this product: ${product.title}`}
+                                    text={`I found a beautiful product on MYSMME: ${product.title}`}
                                 />
-                                <Button variant="outline" onClick={() => handleAddToWishlist(product._id)}>
-                                    <Heart className={`h-4 w-4 mr-1 ${wishlist.some((w) => w.products.includes(product._id)) ? "fill-red-500" : ""}`} />
-                                    <span className="hidden md:inline">
-                                        {wishlist.some((w) => w.products.includes(product._id)) ? "Remove from Wishlist" : "Add to Wishlist"}
-                                    </span>
-                                </Button>
                             </div>
+                            {/* Description */}
+                            <h1 className="text-gray-500 text-2xl font-semibold">{product.description}</h1>
+                            <p className="text-sm text-muted-foreground">Posted: {formatDate(product.createdAt)}</p>
                         </div>
 
                         {/* Price & Discount */}
