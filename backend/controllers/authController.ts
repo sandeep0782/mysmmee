@@ -7,6 +7,10 @@ import {
 } from "../config/emailConfig";
 import { response } from "../utils/responseHandler";
 import { generateToken } from "../utils/generateToken";
+import fs from "fs";
+import path from "path";
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -47,9 +51,6 @@ export const register = async (req: Request, res: Response) => {
     );
   }
 };
-
-import fs from "fs";
-import path from "path";
 
 export const registerVendor = async (req: Request, res: Response) => {
   try {
@@ -125,18 +126,11 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
-      // HTTPS only
-      // httpOnly: true,
-      // sameSite: "none",
-      // secure: true,
-      // domain: ".mysmme.com",
-      // maxAge: 24 * 60 * 60 * 1000,
-
-      // For HTTP only
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: isProduction ? "none" : "lax", // cross-site in prod
+      secure: isProduction, // HTTPS only in prod
+      domain: isProduction ? ".mysmme.com" : undefined, // set domain in prod
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days or session
     });
 
     await user.save();
@@ -211,18 +205,11 @@ export const login = async (req: Request, res: Response) => {
 
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
-      // For HTTP only
-      // httpOnly: true,
-      // sameSite: "none",
-      // secure: true,
-      // domain: ".mysmme.com",
-      // maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
-
-      // For HTTP only
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: isProduction ? "none" : "lax", // cross-site in prod
+      secure: isProduction, // HTTPS only in prod
+      domain: isProduction ? ".mysmme.com" : undefined, // set domain in prod
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
     });
 
     return response(res, 200, "Login successful", {
@@ -354,17 +341,9 @@ export const logout = async (_: Request, res: Response) => {
   try {
     // Clear the access token cookie
     res.clearCookie("access_token", {
-      // For HTTP only
-      // httpOnly: true,
-      // sameSite: "none", // must match the login cookie
-      // secure: true, // must match the login cookie
-      // domain: ".mysmme.com", // must match the login cookie
-      // path: "/", // must match login
-
-      // For HTTP only
       httpOnly: true,
-      sameSite: "lax", // must match the login cookie
-      secure: false, // must match the login cookie
+      sameSite: isProduction ? "none" : "lax", // cross-site in prod
+      secure: isProduction, // HTTPS only in prod
       path: "/", // must match login
     });
     return response(res, 200, "Successfully logged out.");
