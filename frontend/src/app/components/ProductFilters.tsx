@@ -16,6 +16,8 @@ interface ProductFiltersProps {
     selectedColor: string[];
     selectedCategory: string[];
     toggleFilter: (section: string, item: string) => void;
+    hideBrandFilter?: boolean
+
 }
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({
@@ -24,6 +26,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     selectedColor,
     selectedCategory,
     toggleFilter,
+    hideBrandFilter = false
+
 }) => {
     const { data: colorResponse } = useGetColorsQuery({});
     const colors = colorResponse?.data || [];
@@ -66,78 +70,76 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             className="bg-white p-6 border"
         >
             {/* BRAND */}
-            <AccordionItem value="brand">
-                <AccordionTrigger
-                    className="text-base font-semibold text-black uppercase [&>svg]:hidden"
-                    onClick={(e) => e.preventDefault()}
-                >
-                    <div className="mb-2">
-                        Brand
-                    </div>
-                    {/* Brand Search */}
-                    <div className="flex items-center justify-end">
-                        {!searchBrandActive ? (
-                            <div
-                                onClick={() => setSearchBrandActive(true)}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                <Search size={18} />
-                            </div>
-                        ) : (
-                            <div className="relative w-full" onClick={(e) => e.stopPropagation()}>
-                                <input
-                                    type="text"
-                                    placeholder="Search brand..."
-                                    value={brandSearch}
-                                    onChange={(e) => setBrandSearch(e.target.value)}
-                                    className="w-full p-2 py-1 border rounded-md text-sm pr-8"
-                                    autoFocus
-                                />
-                                <button
-                                    onClick={() => {
-                                        setSearchBrandActive(false);
-                                        setBrandSearch("");
-                                    }}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                </AccordionTrigger>
-                <AccordionContent>
-                    <div className="space-y-2">
-
-                        {/* Brand List */}
-                        {visibleBrands.map((brand: any) => {
-                            const checked = selectedBrand.includes(brand._id);
-
-                            return (
+            {!hideBrandFilter && (
+                <AccordionItem value="brand">
+                    <AccordionTrigger
+                        className="text-base font-semibold text-black uppercase [&>svg]:hidden"
+                        onClick={(e) => e.preventDefault()}
+                    >
+                        <div className="mb-2">Brand</div>
+                        {/* Brand Search */}
+                        <div className="flex items-center justify-end">
+                            {!searchBrandActive ? (
                                 <div
-                                    key={brand._id}
-                                    className="flex items-center space-x-2 cursor-pointer"
-                                    onClick={() => toggleFilter("brand", brand._id)}
+                                    onClick={() => setSearchBrandActive(true)}
+                                    className="text-gray-500 hover:text-gray-700"
                                 >
-                                        <Checkbox checked={checked}
+                                    <Search size={18} />
+                                </div>
+                            ) : (
+                                <div className="relative w-full" onClick={(e) => e.stopPropagation()}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search brand..."
+                                        value={brandSearch}
+                                        onChange={(e) => setBrandSearch(e.target.value)}
+                                        className="w-full p-2 py-1 border rounded-md text-sm pr-8"
+                                        autoFocus
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            setSearchBrandActive(false);
+                                            setBrandSearch("");
+                                        }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <div className="space-y-2">
+                            {/* Brand List */}
+                            {visibleBrands.map((brand: any) => {
+                                const checked = selectedBrand.includes(brand._id) || selectedBrand.includes(brand.slug);
+                                return (
+                                    <div
+                                        key={brand._id}
+                                        className="flex items-center space-x-2 cursor-pointer"
+                                        onClick={() => toggleFilter("brand", brand._id)}
+                                    >
+                                        <Checkbox
+                                            checked={checked}
                                             className="accent-primary w-4 h-4 border border-primary"
                                         />
-                                    <label className="text-sm font-medium">{brand.name}</label>
+                                        <label className="text-sm font-medium">{brand.name}</label>
+                                    </div>
+                                );
+                            })}
+
+                            {/* Remaining Count */}
+                            {remainingBrandCount > 0 && (
+                                <div className="text-sm text-red-500">
+                                    +{remainingBrandCount} More Brand{remainingBrandCount > 1 ? "s" : ""}
                                 </div>
-                            );
-                        })}
-
-
-                        {/* Remaining Count */}
-                        {remainingBrandCount > 0 && (
-                            <div className="text-sm text-red-500">
-                                +{remainingBrandCount} More Brand{remainingBrandCount > 1 ? "s" : ""}
-                            </div>
-                        )}
-                    </div>
-                </AccordionContent>
-            </AccordionItem>
+                            )}
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+            )}
 
             {/* GENDER */}
             <AccordionItem value="gender">
@@ -156,7 +158,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                                     onClick={() => toggleFilter("gender", label)}
                                 >
                                     <Checkbox checked={checked}
-                                            className="accent-primary w-4 h-4 border border-primary"
+                                        className="accent-primary w-4 h-4 border border-primary"
                                     />
                                     <label className="text-sm font-medium">{label}</label>
                                 </div>
@@ -221,7 +223,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                                     onClick={() => toggleFilter("color", col._id)}
                                 >
                                     <Checkbox checked={checked}
-                                            className="accent-primary w-4 h-4 border border-primary"
+                                        className="accent-primary w-4 h-4 border border-primary"
 
                                     />
                                     <span
@@ -259,7 +261,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                                     onClick={() => toggleFilter("category", cat._id)}
                                 >
                                     <Checkbox checked={checked}
-                                            className="accent-primary w-4 h-4 border border-primary"
+                                        className="accent-primary w-4 h-4 border border-primary"
                                     />
                                     <label className="text-sm font-medium">{cat.name}</label>
                                 </div>

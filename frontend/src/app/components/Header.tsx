@@ -253,14 +253,14 @@ export default function Header() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="http://localhost:5000" passHref>
+          {/* <Link href="http://localhost:5000" passHref>
             <Button
               variant="secondary"
               className="bg-primary hover:bg-primary_hover text-white"
             >
               Start Selling
             </Button>
-          </Link>
+          </Link> */}
 
 
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>

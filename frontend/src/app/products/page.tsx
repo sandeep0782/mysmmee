@@ -47,6 +47,8 @@ const Products = () => {
     const articleTypeSlug = searchParams.get('articleType')
     const categorySlug = searchParams.get('category')
     const genderParam = searchParams.get("gender")
+    const brandParam = searchParams.get('brand'); // can be id or slug
+
 
     // Mobile filter states
     const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
@@ -97,7 +99,7 @@ const Products = () => {
     }
 
     const filterProducts = products.filter((product) => {
-        const brandMatch = selectedBrand.length === 0 || selectedBrand.includes(product.brand?._id)
+        const brandMatch = selectedBrand.length === 0 || selectedBrand.includes(product.brand._id) || selectedBrand.includes(product.brand.slug);
         const genderMatch = selectedGender.length === 0 || selectedGender.includes(product.gender)
         const colorMatch = selectedColor.length === 0 || selectedColor.includes(product.color?._id)
         const categoryMatch = !categorySlug || product.category?.slug === categorySlug
@@ -173,6 +175,14 @@ const Products = () => {
         else setSelectedGender([])
     }, [genderParam])
 
+    useEffect(() => {
+        if (brandParam) {
+            setSelectedBrand([brandParam]); // now brand filter works with slug or id
+        } else {
+            setSelectedBrand([]);
+        }
+    }, [brandParam]);
+
     return (
         <div className="min-h-screen bg-white">
             <div className="w-[95%] mx-auto px-4 py-8">
@@ -198,6 +208,8 @@ const Products = () => {
                             selectedColor={selectedColor}
                             selectedCategory={selectedCategory}
                             toggleFilter={toggleFilter}
+                            hideBrandFilter={!!brandParam} // <- add this
+
                         />
                     </div>
 

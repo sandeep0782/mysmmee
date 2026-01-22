@@ -15,30 +15,47 @@ interface Brand {
     logo?: string;
 }
 
-const ITEMS_PER_SLIDE = 1;
-
 const ShopByBrands = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const { data: apiResponse, isLoading } = useGetBrandsQuery({});
     const [brands, setBrands] = useState<Brand[]>([]);
+    const [itemsPerSlide, setItemsPerSlide] = useState(5);
 
-    // Load brands from API
+    /* ================= RESPONSIVE ITEMS PER SLIDE ================= */
     useEffect(() => {
-        if (apiResponse?.data?.length) {
-            setBrands(apiResponse.data);
-        }
+        const updateItemsPerSlide = () => {
+            let perSlide = 5;
+            if (window.innerWidth < 640) perSlide = 2; // mobile
+            else if (window.innerWidth < 1024) perSlide = 3; // tablet
+            else perSlide = 5; // desktop
+            setItemsPerSlide(perSlide);
+        };
+
+        updateItemsPerSlide();
+        window.addEventListener("resize", updateItemsPerSlide);
+        return () => window.removeEventListener("resize", updateItemsPerSlide);
+    }, []);
+
+    /* ================= LOAD BRANDS ================= */
+    useEffect(() => {
+        if (apiResponse?.data?.length) setBrands(apiResponse.data);
     }, [apiResponse]);
 
-    const totalSlides = Math.ceil(brands.length / ITEMS_PER_SLIDE);
+    const totalSlides = Math.ceil(brands.length / itemsPerSlide);
 
-    // Auto-slide
+    /* ================= RESET CURRENT SLIDE IF OUT OF BOUNDS ================= */
+    useEffect(() => {
+        if (currentSlide >= totalSlides) {
+            setCurrentSlide(totalSlides - 1 >= 0 ? totalSlides - 1 : 0);
+        }
+    }, [totalSlides, currentSlide]);
+
+    /* ================= AUTO SLIDE ================= */
     useEffect(() => {
         if (totalSlides <= 1) return;
-
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % totalSlides);
         }, 5000);
-
         return () => clearInterval(timer);
     }, [totalSlides]);
 
@@ -53,7 +70,7 @@ const ShopByBrands = () => {
     return (
         <section className="py-16 bg-yellow-50">
             <div className="w-[95%] mx-auto px-4">
-                <h2 className="text-3xl font-bold mb-12 uppercase tracking-widest">
+                <h2 className="text-3xl font-bold mb-12 uppercase tracking-widest text-center md:text-left">
                     Shop by <span className="text-primary">Brand</span>
                 </h2>
 
@@ -66,46 +83,42 @@ const ShopByBrands = () => {
                         >
                             {Array.from({ length: totalSlides }).map((_, slideIndex) => (
                                 <div key={slideIndex} className="flex-none w-full">
-                                    <div className="flex justify-center gap-6">
+                                    <div className="flex justify-center gap-4 sm:gap-6 flex-wrap md:flex-nowrap">
                                         {brands
-                                            .slice(
-                                                slideIndex * ITEMS_PER_SLIDE,
-                                                slideIndex * ITEMS_PER_SLIDE + ITEMS_PER_SLIDE
-                                            )
+                                            .slice(slideIndex * itemsPerSlide, slideIndex * itemsPerSlide + itemsPerSlide)
                                             .map((brand) => (
                                                 <Card
                                                     key={brand._id}
-                                                    className="w-40 h-40 rounded-full flex flex-col items-center justify-center shadow-md hover:shadow-lg transition"
+                                                    className="w-[120px] sm:w-32 md:w-40 h-48 sm:h-56 md:h-60 relative overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
                                                 >
                                                     <Link
                                                         href={`/products?brand=${brand.slug}`}
-                                                        className="flex flex-col items-center justify-center"
+                                                        className="block w-full h-full"
                                                     >
-                                                        <div className="relative w-24 h-24 mb-3">
+                                                        <div className="relative w-full h-full overflow-hidden group rounded-lg">
                                                             {brand.logo ? (
-                                                                <Image
-                                                                    src={brand.logo}
-                                                                    alt={brand.name}
-                                                                    fill
-                                                                    className="object-cover rounded-full"
-                                                                    onError={(e) => {
-                                                                        // Fallback to placeholder if image fails
-                                                                        (e.target as HTMLImageElement).src =
-                                                                            "/placeholder-logo.png";
-                                                                    }}
-                                                                />
+                                                                <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
+                                                                    <Image
+                                                                        src={brand.logo}
+                                                                        alt={brand.name}
+                                                                        fill
+                                                                        className="object-cover rounded-lg"
+                                                                    />
+                                                                </div>
                                                             ) : (
-                                                                <Image
-                                                                    src="/placeholder-logo.png"
-                                                                    alt="placeholder"
-                                                                    fill
-                                                                    className="object-cover rounded-full"
-                                                                />
+                                                                <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded-lg">
+                                                                    <span className="text-gray-500 text-xs sm:text-sm">
+                                                                        No Logo
+                                                                    </span>
+                                                                </div>
                                                             )}
+
+                                                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
+                                                                <h3 className="text-white text-center text-xs sm:text-sm font-semibold px-2 line-clamp-2">
+                                                                    {brand.name}
+                                                                </h3>
+                                                            </div>
                                                         </div>
-                                                        <h3 className="text-center text-sm font-medium line-clamp-2">
-                                                            {brand.name}
-                                                        </h3>
                                                     </Link>
                                                 </Card>
                                             ))}
@@ -120,20 +133,20 @@ const ShopByBrands = () => {
                         <>
                             <button
                                 onClick={prevSlide}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hidden sm:flex"
                             >
                                 <ChevronLeft className="h-6 w-6" />
                             </button>
 
                             <button
                                 onClick={nextSlide}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hidden sm:flex"
                             >
                                 <ChevronRight className="h-6 w-6" />
                             </button>
 
                             {/* ================= DOTS ================= */}
-                            <div className="mt-8 flex justify-center gap-2">
+                            <div className="mt-6 flex justify-center gap-2 sm:gap-3">
                                 {Array.from({ length: totalSlides }).map((_, index) => (
                                     <button
                                         key={index}
@@ -152,3 +165,4 @@ const ShopByBrands = () => {
 };
 
 export default ShopByBrands;
+    

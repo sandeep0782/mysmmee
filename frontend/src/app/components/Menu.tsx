@@ -48,7 +48,7 @@ export default function MainMenu() {
                                     {/* Main Menu */}
                                     <Link
                                         href={`/products?category=${category.slug}`}
-                                        className="flex items-center space-x-1 text-md text-gray-700 relative group uppercase font-bold"
+                                        className="flex items-center space-x-1  text-gray-700 relative group uppercase "
                                     >
                                         <span>{category.name}</span>
                                         {/* Underline */}

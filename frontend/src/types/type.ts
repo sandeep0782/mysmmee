@@ -93,22 +93,22 @@ export interface Order {
 export interface Category {
   _id: string;
   name: string;
-  slug?: string;
+  slug: string;
 }
 export interface Colors {
   _id: string;
   name: string;
-  slug?: string;
+  slug: string;
 }
 export interface Brand {
   _id: string;
   name: string;
-  slug?: string;
+  slug: string;
 }
 export interface ArticleType {
   _id: string;
   name: string;
-  slug?: string;
+  slug: string;
 }
 
 export interface SubCategory {

@@ -78,8 +78,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/whitehat" className="hover:text-white">
-                  Whitehat
+                <Link
+                  href="https://admin.mysmme.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white"
+                >
+                  Become Seller
                 </Link>
               </li>
               <li>

@@ -125,11 +125,18 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
+      // HTTPS only
+      // httpOnly: true,
+      // sameSite: "none",
+      // secure: true,
+      // domain: ".mysmme.com",
+      // maxAge: 24 * 60 * 60 * 1000,
+
+      // For HTTP only
       httpOnly: true,
-      sameSite: "none", // needed for cross-site (frontend and backend on different domains)
-      secure: true, // HTTPS only
-      domain: ".mysmme.com", // your domain
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: "lax",
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     await user.save();
@@ -201,11 +208,18 @@ export const login = async (req: Request, res: Response) => {
 
     const accessToken = generateToken(user);
     res.cookie("access_token", accessToken, {
+      // For HTTP only
+      // httpOnly: true,
+      // sameSite: "none",
+      // secure: true,
+      // domain: ".mysmme.com",
+      // maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
+
+      // For HTTP only
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      domain: ".mysmme.com",
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined, // 30 days or session
+      sameSite: "lax",
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     return response(res, 200, "Login successful", {
@@ -337,10 +351,17 @@ export const logout = async (_: Request, res: Response) => {
   try {
     // Clear the access token cookie
     res.clearCookie("access_token", {
+      // For HTTP only
+      // httpOnly: true,
+      // sameSite: "none", // must match the login cookie
+      // secure: true, // must match the login cookie
+      // domain: ".mysmme.com", // must match the login cookie
+      // path: "/", // must match login
+
+      // For HTTP only
       httpOnly: true,
-      sameSite: "none", // must match the login cookie
-      secure: true, // must match the login cookie
-      domain: ".mysmme.com", // must match the login cookie
+      sameSite: "lax", // must match the login cookie
+      secure: false, // must match the login cookie
       path: "/", // must match login
     });
     return response(res, 200, "Successfully logged out.");
