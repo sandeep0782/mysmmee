@@ -35,10 +35,10 @@ export default function OrdersPage() {
       <div className="my-10 max-w-3xl justify-center mx-auto">
   <NoData
   imageUrl="/images/no-book.jpg"
-  message="You haven't order any books yet."
-  description="Start order your books to reach potential buyers. order your first book now!"
-  onClick={() => router.push("/books")}
-  buttonText="Order First Book"
+  message="You haven't order any product yet."
+  description="Start order your products to reach potential buyers. order your first product now!"
+  onClick={() => router.push("/products")}
+  buttonText="Order First Product"
 />
       </div>
     );

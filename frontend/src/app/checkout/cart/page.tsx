@@ -15,6 +15,7 @@ import {
   useCreateOrUpdateOrderMutation,
   useGetOrderByIdQuery,
   useCreateRazorpayPaymentMutation,
+  useUpdateCartItemQuantityMutation,
 } from "@/store/api";
 import { clearCart, setCart } from "@/store/slices/cartSlice";
 import {
@@ -57,6 +58,7 @@ export default function CheckoutPage() {
   const [createRazorpayOrder] = useCreateRazorpayPaymentMutation();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
+  const [updateCartItemQuantity] = useUpdateCartItemQuantityMutation();
 
   useEffect(() => {
     if (user && user.role !== "user") {
@@ -103,6 +105,17 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to remove item from cart");
+    }
+  };
+
+  const handleQuantityChange = async (productId: string, quantity: number) => {
+    if (quantity < 1) return; // prevent invalid quantity
+    try {
+      await updateCartItemQuantity({ productId, quantity }).unwrap();
+      toast.success("Cart updated!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update quantity");
     }
   };
 
@@ -297,9 +310,9 @@ export default function CheckoutPage() {
         message="Your cart is empty."
         description="Looks like you haven't added any items yet. 
         Explore our collection and find something you love!"
-        buttonText="Browse Books"
+        buttonText="Browse Products"
         imageUrl="/images/cart.webp"
-        onClick={() => router.push('/books')}
+        onClick={() => router.push('/products')}
       />
     );
   }
@@ -375,6 +388,7 @@ export default function CheckoutPage() {
                     items={cart.items}
                     onRemoveItem={handleRemoveItem}
                     onToggleWishlist={toggleWishlist}
+                    onQuantityChange={handleQuantityChange} // NEW
                     wishlist={wishlist}
                   />
                 </CardContent>

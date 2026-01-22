@@ -164,8 +164,8 @@ export default function BookDetailsPage() {
             Home
           </Link>
           <span>/</span>
-          <Link href="/books" className=" hover:underline">
-            Books
+          <Link href="/products" className=" hover:underline">
+            Products
           </Link>
           <span>/</span>
           <p className="text-gray-600">{book.category.toString()}</p>

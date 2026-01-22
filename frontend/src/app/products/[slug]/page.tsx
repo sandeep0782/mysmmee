@@ -23,6 +23,7 @@ import { ShareButton } from '@/app/components/Share'
 import ZoomImage from '@/app/components/ZoomImage'
 import SimilarProducts from '@/app/components/SimilarProducts'
 import { DELIVERABLE_PINCODES } from '@/constant/DeliveryPincode'
+import { toggleLoginDialog } from '@/store/slices/userSlice'
 
 const page = () => {
     const { slug } = useParams()
@@ -47,6 +48,7 @@ const page = () => {
     const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null)
     const [isDeliverable, setIsDeliverable] = useState<boolean | null>(null)
     const DELIVERABLE_PINCODES_SET = new Set(DELIVERABLE_PINCODES);
+    const user = useSelector((state: RootState) => state.user.user)
 
 
     useEffect(() => {
@@ -57,6 +59,11 @@ const page = () => {
     }, [apiResponse])
 
     const handleAddToCart = async () => {
+        if (!user) {
+            toast("Please login to add to cart", { icon: "🔒" })
+            dispatch(toggleLoginDialog());
+            return
+        }
         if (product) {
             setIsAddtoCart(true)
             try {
@@ -77,6 +84,11 @@ const page = () => {
     }
 
     const handleAddToWishlist = async (productId: string) => {
+        if (!user) {
+            toast("Please login to add to wishlist", { icon: "🔒" })
+            dispatch(toggleLoginDialog());
+            return
+        }
         try {
             const isWishlist = wishlist.some((item) => item.products.includes(productId))
             if (isWishlist) {

@@ -40,6 +40,8 @@ const API_URLS = {
   ADD_TO_CART: `${BASE_URL}/api/cart/add`,
   REMOVE_FROM_CART: (productId: string) =>
     `${BASE_URL}/api/cart/remove/${productId}`,
+  UPDATE_CART_ITEM: (productId: string) =>
+    `${BASE_URL}/api/cart/update/${productId}`,
 
   // Wishlist related URLs
   WISHLIST: `${BASE_URL}/api/wishlist`,
@@ -261,6 +263,15 @@ export const api = createApi({
       invalidatesTags: ["Cart"],
     }),
 
+    updateCartItemQuantity: builder.mutation({
+      query: ({ productId, quantity }) => ({
+        url: API_URLS.UPDATE_CART_ITEM(productId),
+        method: "PATCH",
+        body: { quantity },
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+
     // Wishlist endpoints
     getWishlist: builder.query({
       query: () => API_URLS.WISHLIST,
@@ -367,4 +378,5 @@ export const {
   useGetProductBySlugQuery,
 
   useGetMenuQuery,
+  useUpdateCartItemQuantityMutation,
 } = api;

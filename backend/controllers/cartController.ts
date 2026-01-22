@@ -5,7 +5,7 @@ import { response } from "../utils/responseHandler";
 
 export const addToCart = async (req: Request, res: Response) => {
   try {
-    const userId = req?.id; 
+    const userId = req?.id;
     const { productId, quantity } = req.body;
 
     const product = await Product.findById(productId);
@@ -15,7 +15,7 @@ export const addToCart = async (req: Request, res: Response) => {
 
     // if (product.seller.toString() === userId) {
     //   return response(res, 400, "You cannot add your own product to the cart");
-    // }  
+    // }
 
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {
@@ -23,7 +23,7 @@ export const addToCart = async (req: Request, res: Response) => {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item) => item.product.toString() === productId,
     );
     if (existingItem) {
       existingItem.quantity += quantity;
@@ -45,7 +45,7 @@ export const addToCart = async (req: Request, res: Response) => {
 
 export const removeFromCart = async (req: Request, res: Response) => {
   try {
-    const userId = req?.id; 
+    const userId = req?.id;
     const { productId } = req.params;
 
     const cart = await Cart.findOne({ user: userId });
@@ -54,7 +54,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
     }
 
     cart.items = cart.items.filter(
-      (item) => item.product.toString() !== productId
+      (item) => item.product.toString() !== productId,
     );
     await cart.save();
 
@@ -75,5 +75,39 @@ export const getCart = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching cart:", error);
     response(res, 500, "Error fetching cart");
+  }
+};
+
+// controllers/cartController.ts
+
+export const updateCartItemQuantity = async (req: Request, res: Response) => {
+  try {
+    const userId = req.id; // make sure your auth middleware sets this
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
+    if (!productId || quantity == null) {
+      return response(res, 400, "Product ID and quantity are required");
+    }
+
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+      return response(res, 404, "Cart not found");
+    }
+
+    const item = cart.items.find(
+      (item) => item.product.toString() === productId,
+    );
+    if (!item) {
+      return response(res, 404, "Product not found in cart");
+    }
+
+    item.quantity = quantity; // update quantity
+    await cart.save();
+
+    response(res, 200, "Cart updated successfully", cart);
+  } catch (error) {
+    console.error(error);
+    response(res, 500, "Error updating cart item");
   }
 };

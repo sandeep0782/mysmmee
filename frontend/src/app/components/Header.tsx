@@ -56,7 +56,7 @@ export default function Header() {
 
 
   const handleSearch = () => {
-    router.push(`/books?search=${encodeURIComponent(searchTerm)}`);
+    router.push(`/products?search=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleLogout = async () => {
