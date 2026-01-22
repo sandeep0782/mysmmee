@@ -30,20 +30,20 @@ export const register = async (req: Request, res: Response) => {
     const result = await sendVerificationEmail(
       user.email,
       verificationToken,
-      user.name
+      user.name,
     );
 
     return response(
       res,
       201,
-      "Registration successful. Please check your email to verify your account."
+      "Registration successful. Please check your email to verify your account.",
     );
   } catch (error) {
     console.log(error);
     return response(
       res,
       500,
-      "An error occurred during registration. Please try again."
+      "An error occurred during registration. Please try again.",
     );
   }
 };
@@ -100,14 +100,14 @@ export const registerVendor = async (req: Request, res: Response) => {
     return response(
       res,
       201,
-      "Vendor registration successful. Please check your email to verify your account."
+      "Vendor registration successful. Please check your email to verify your account.",
     );
   } catch (error) {
     console.error(error);
     return response(
       res,
       500,
-      "An error occurred during registration. Please try again."
+      "An error occurred during registration. Please try again.",
     );
   }
 };
@@ -144,18 +144,21 @@ export const verifyEmail = async (req: Request, res: Response) => {
     return response(
       res,
       200,
-      "Email verified successfully. You can now log in to your account."
+      "Email verified successfully. You can now log in to your account.",
     );
   } catch (error) {
     return response(
       res,
       500,
-      "An error occurred while verifying your email. Please try again."
+      "An error occurred while verifying your email. Please try again.",
     );
   }
 };
 
 export const login = async (req: Request, res: Response) => {
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  console.log("BACKEND_URL:", process.env.BACKEND_URL);
+
   try {
     const { email, password, rememberMe } = req.body;
     const user = (await User.findOne({ email })) as IUser;
@@ -169,7 +172,7 @@ export const login = async (req: Request, res: Response) => {
       return response(
         res,
         403,
-        `Account locked. Try again after ${user.lockUntil.toLocaleTimeString()}`
+        `Account locked. Try again after ${user.lockUntil.toLocaleTimeString()}`,
       );
     }
 
@@ -185,7 +188,7 @@ export const login = async (req: Request, res: Response) => {
         return response(
           res,
           403,
-          "Account locked due to too many failed login attempts. Try again in 30 minutes."
+          "Account locked due to too many failed login attempts. Try again in 30 minutes.",
         );
       }
 
@@ -202,7 +205,7 @@ export const login = async (req: Request, res: Response) => {
       return response(
         res,
         401,
-        "Please verify your email before logging in. Check your inbox for the verification link."
+        "Please verify your email before logging in. Check your inbox for the verification link.",
       );
     }
 
@@ -234,7 +237,7 @@ export const login = async (req: Request, res: Response) => {
     return response(
       res,
       500,
-      "An error occurred during login. Please try again."
+      "An error occurred during login. Please try again.",
     );
   }
 };
@@ -303,14 +306,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
     return response(
       res,
       200,
-      "A password reset link has been sent to your email address"
+      "A password reset link has been sent to your email address",
     );
   } catch (error) {
     console.log(error);
     return response(
       res,
       500,
-      "An error occurred while processing your request. Please try again."
+      "An error occurred while processing your request. Please try again.",
     );
   }
 };
@@ -336,13 +339,13 @@ export const resetPassword = async (req: Request, res: Response) => {
     return response(
       res,
       200,
-      "Your password has been successfully reset. You can now log in with your new password."
+      "Your password has been successfully reset. You can now log in with your new password.",
     );
   } catch (error) {
     return response(
       res,
       500,
-      "An error occurred while resetting your password. Please try again."
+      "An error occurred while resetting your password. Please try again.",
     );
   }
 };
@@ -370,7 +373,7 @@ export const logout = async (_: Request, res: Response) => {
     return response(
       res,
       500,
-      "An error occurred while processing your request. Please try again."
+      "An error occurred while processing your request. Please try again.",
     );
   }
 };
@@ -382,11 +385,11 @@ export const checkUserAuth = async (req: Request, res: Response) => {
       return response(
         res,
         400,
-        "Unauthenticated! Please login before accessing the data"
+        "Unauthenticated! Please login before accessing the data",
       );
     }
     const user = await User.findById(userId).select(
-      "-password -verificationToken -resetPasswordToken -resetPasswordExpires"
+      "-password -verificationToken -resetPasswordToken -resetPasswordExpires",
     );
     if (!user) {
       return response(res, 403, "User not found");
@@ -395,7 +398,7 @@ export const checkUserAuth = async (req: Request, res: Response) => {
       res,
       201,
       "User retrieved and allowed to use bookkart",
-      user
+      user,
     );
   } catch (error) {
     return response(res, 500, "Internal server error", error);
