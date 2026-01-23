@@ -222,7 +222,7 @@ export default function BookDetailsPage() {
               </div>
               <div className="flex gap-2">
                 <ShareButton
-                  url={`${window.location.origin}/books/${book._id}`}
+                  url={`${window.location.origin}/products/${book._id}`}
                   title={`Check out this book: ${book.title}`}
                   text={`I found this interesting book on BookKart: ${book.title}`}
                 />

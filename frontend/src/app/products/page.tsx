@@ -197,21 +197,20 @@ const Products = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="w-[95%] mx-auto px-4 py-8">
+            <div className="w-[95%] mx-auto px-4 py-4">
                 {/* Breadcrumb */}
-                <nav className="mb-4 flex items-center gap-2 text-muted-foreground">
+                <nav className="mb-2 flex items-center gap-2 text-muted-foreground">
                     <Link href="/" className="text-blue-500 hover:underline">Home</Link>
                     <span>/</span>
                     <span>Products</span>
                 </nav>
-
                 <div className='flex justify-between'>
-                    <h1 className="mb-8 text-2xl font-bold text-gray-800">Products</h1>
+                    <h1 className="mb-2 text-md font-bold text-gray-800">
+                        Products - {sortedProducts.length} {sortedProducts.length === 1 ? "product" : "products"} found
+                    </h1>
                     <TopFilters sortOption={sortOption} setSortOption={setSortOption} />
                 </div>
-
                 <div className='grid gap-8 md:grid-cols-[280px_1fr]'>
-
                     {/* Sidebar Filters (Desktop) */}
                     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto hidden md:block">
                         <ProductFilters
@@ -221,7 +220,6 @@ const Products = () => {
                             selectedCategory={selectedCategory}
                             toggleFilter={toggleFilter}
                             hideBrandFilter={!!brandParam} // <- add this
-
                         />
                     </div>
 

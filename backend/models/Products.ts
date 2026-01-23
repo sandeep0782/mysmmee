@@ -30,6 +30,8 @@ export interface IProduct extends Document {
       bankName: string;
     };
   };
+  rating: number;
+  numReviews: number;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -64,6 +66,7 @@ const productSchema = new Schema<IProduct>(
     description: { type: String },
     finalPrice: { type: Number, required: true },
     shippingCharge: { type: String },
+
     paymentMode: {
       type: String,
       enum: ["UPI", "Bank Account"],
@@ -77,9 +80,11 @@ const productSchema = new Schema<IProduct>(
         bankName: { type: String },
       },
     },
+    rating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
     seller: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 productSchema.pre("validate", function (next) {

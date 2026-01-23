@@ -28,6 +28,9 @@ export interface BookDetails {
       bankName: string;
     };
   };
+  rating: number;
+  numReviews: number;
+  reviews: Review[];
   createdAt: Date;
 }
 
@@ -122,4 +125,15 @@ export interface MenuCategory {
   name: string;
   slug: string;
   articleTypes: ArticleType[];
+}
+
+export interface Review {
+  _id: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  user?: {
+    _id: string;
+    name: string;
+  };
 }

@@ -26,10 +26,19 @@ import path from "path";
 import "./services/cron"; // ✅ make sure cron runs
 import articleTypeRoutes from "./routes/articleTypeRoutes";
 import { getProductMenu } from "./controllers/menuController";
+import reviewRoutes from "./routes/reviewRoutes";
 
 dotenv.config();
 
 const app = express();
+
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  if (host && host.startsWith("mysmme.com")) {
+    return res.redirect(301, `https://www.mysmme.com${req.originalUrl}`);
+  }
+  next();
+});
 
 // Middleware
 // const corsOptions = {
@@ -68,6 +77,7 @@ app.use("/api/articleTypes", articleTypeRoutes);
 app.use("/api/season", seasonRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/admin", adminRoute);
+app.use("/api/reviews", reviewRoutes);
 
 app.use("/api", importRoutes); // Now POST /api/products/import works
 app.use("/api", importUserRoutes);

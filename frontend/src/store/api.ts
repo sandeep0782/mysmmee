@@ -57,6 +57,9 @@ const API_URLS = {
   //address related URLs
   GET_ADDRESS: `${BASE_URL}/api/address`,
   ADD_OR_UPDATE_ADDRESS: `${BASE_URL}/api/address/create-or-update`,
+
+  GET_REVIEW: `${BASE_URL}/api/reviews`,
+  ADD_REVIEW: (productId: string) => `${BASE_URL}/api/reviews/${productId}`,
 };
 
 export const api = createApi({
@@ -330,6 +333,19 @@ export const api = createApi({
       }),
       invalidatesTags: ["Address"],
     }),
+
+    addReview: builder.mutation({
+      query: ({ productId, rating, comment }) => ({
+        url: API_URLS.ADD_REVIEW(productId),
+        method: "POST",
+        body: { rating, comment },
+      }),
+      invalidatesTags: ["Product"],
+    }),
+    getReviews: builder.query({
+      query: (productId: string) => `${API_URLS.GET_REVIEW}/${productId}`,
+      providesTags: ["Product"],
+    }),
   }),
 });
 
@@ -379,4 +395,7 @@ export const {
 
   useGetMenuQuery,
   useUpdateCartItemQuantityMutation,
+
+  useAddReviewMutation,
+  useGetReviewsQuery,
 } = api;

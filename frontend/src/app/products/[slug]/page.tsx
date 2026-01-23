@@ -16,7 +16,7 @@ import { filters } from '@/constant/Filter'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import toast from 'react-hot-toast'
-import { useAddToCartMutation, useAddToWishlistMutation, useGetProductBySlugQuery, useRemoveFromWishlistMutation } from '@/store/api'
+import { useAddReviewMutation, useAddToCartMutation, useAddToWishlistMutation, useGetProductBySlugQuery, useRemoveFromWishlistMutation } from '@/store/api'
 import { addToCart } from '@/store/slices/cartSlice'
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { ShareButton } from '@/app/components/Share'
@@ -24,15 +24,17 @@ import ZoomImage from '@/app/components/ZoomImage'
 import SimilarProducts from '@/app/components/SimilarProducts'
 import { DELIVERABLE_PINCODES } from '@/constant/DeliveryPincode'
 import { toggleLoginDialog } from '@/store/slices/userSlice'
+import ReviewsSection from '@/app/components/Review'
 
 const page = () => {
     const { slug } = useParams()
     const router = useRouter()
     const [selectedSize, setSelectedSize] = useState<string | null>(null)
     const [isAddtoCart, setIsAddtoCart] = useState(false)
-    const { data: apiResponse, isLoading, isError } = useGetProductBySlugQuery(slug, {
+    const { data: apiResponse, isLoading, isError, refetch } = useGetProductBySlugQuery(slug, {
         skip: !slug, // skips query if slug is empty
     });
+
     const [product, setProduct] = useState<BookDetails | null>(null)
     const [addToCartMutation] = useAddToCartMutation()
     const [addToWishlistMutation] = useAddToWishlistMutation()
@@ -50,6 +52,8 @@ const page = () => {
     const DELIVERABLE_PINCODES_SET = new Set(DELIVERABLE_PINCODES);
     const user = useSelector((state: RootState) => state.user.user)
 
+    // useAddReviewMutation provides isLoading
+    const [addReview, { isLoading: isSubmittingReview }] = useAddReviewMutation();
 
     useEffect(() => {
         if (apiResponse?.success && apiResponse?.data) {
@@ -161,6 +165,13 @@ const page = () => {
             setIsDeliverable(false);
         }
     };
+
+    const formatTotalRatings = (count: number) => {
+        if (count >= 1000000) return (count / 1000000).toFixed(1) + "M";
+        if (count >= 1000) return (count / 1000).toFixed(1) + "k";
+        return count.toString();
+    };
+
     return (
         <div className="min-h-screen">
             <div className="container mx-auto px-4 py-8">
@@ -237,15 +248,21 @@ const page = () => {
                                 />
                             </div>
                             {/* Description */}
-                            <h1 className="text-gray-500 text-2xl font-semibold">{product.description}</h1>
-                            <p className="text-sm text-muted-foreground">Posted: {formatDate(product.createdAt)}</p>
+                            <h1 className="text-gray-500 text-xl">{product.description}</h1>
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                                <span className="font-semibold">{product.rating.toFixed(1)}</span>
+                                <span>|</span>
+                                <span className="text-red-500">
+                                    {formatTotalRatings(product.numReviews)} {product.numReviews === 1 ? "Rating" : "Ratings"}
+                                </span>
+                            </div>
                         </div>
 
                         {/* Price & Discount */}
                         <div className="space-y-4">
                             <div className="border-t border-gray-300"></div>
                             <div className="flex items-baseline gap-2 flex-wrap">
-                                <span className="text-3xl font-bold text-black">₹ {product.finalPrice}</span>
+                                <span className="text-2xl font-bold text-black">₹ {product.finalPrice}</span>
                                 <span className="text-sm text-muted-foreground font-medium">MRP</span>
                                 <span className="text-lg text-muted-foreground line-through">₹ {product.price}</span>
                                 {calculateDiscount(product.price, product.finalPrice) > 0 && (
@@ -307,20 +324,7 @@ const page = () => {
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap gap-4">
-                                {/* <Button className="flex-[0.6] py-6 bg-blue-700 flex items-center justify-center cursor-pointer" onClick={handleAddToCart} disabled={isAddtoCart}>
-                                    {isAddtoCart ? (
-                                        <>
-                                            <Loader2 className="animate-spin mr-2" size={20} />
-                                            Adding to Cart
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ShoppingCart className="mr-2 h-5 w-5" />
-                                            Buy Now
-                                        </>
-                                    )}
-                                </Button>
-                                */}
+
                                 <Button
                                     className={`flex-[0.6] py-6 flex items-center justify-center cursor-pointer transition-colors ${isInCart ? "bg-green-600 hover:bg-green-700" : "bg-primary hover:bg-primary_hover"
                                         }`}
@@ -444,53 +448,11 @@ const page = () => {
                                         <div><p className="text-gray-500 text-sm">Wash Care</p><p>Dry Clean</p></div>
                                     </div>
                                 </div>
+                                {/* Review Section */}
+                                <ReviewsSection product={product} user={user} />
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Bottom Section: Description & Sold By */}
-                <div className="mt-8 grid gap-8 md:grid-cols-2">
-                    <Card className="border-none shadow-md">
-                        <CardHeader>
-                            <CardTitle className="text-lg">Description</CardTitle>
-                        </CardHeader>
-                        <CardContent className="text-sm text-muted-foreground">{product.description}</CardContent>
-                    </Card>
-                    <Card className="border-none shadow-md">
-                        <CardHeader>
-                            <CardTitle className="text-lg">Sold By</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 rounded-full bg-blue-300 flex items-center justify-center">
-                                    <User2 className="h-6 w-6 text-blue-500" />
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-medium">{product.title}</span>
-                                        <Badge variant="secondary" className="text-green-600">
-                                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                                            Verified
-                                        </Badge>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                        <MapPin className="h-4 w-4" />
-                                        Manohar Pur Haryana
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                                <MessageCircle className="h-4 w-4 text-blue-600" />
-                                <span>Contact: {product.title}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    {/* <SimilarProducts
-                        // articleTypeSlug={product.articleType?.slug} // pass slug instead of _id
-                        // currentProductSlug={product.slug}          // exclude current product by slug
-                        colorSlug={product.color.slug}             // optional
-                    /> */}
                 </div>
             </div>
         </div>
