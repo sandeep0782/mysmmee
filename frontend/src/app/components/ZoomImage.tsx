@@ -1,44 +1,55 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Image from 'next/image'
-import { X } from 'lucide-react'
 
 interface ZoomImageProps {
-    src: string
+    src?: string | null
     alt: string
+    sizes?: string
+    onLoad?: () => void
 }
 
-const ZoomImage: React.FC<ZoomImageProps> = ({ src, alt }) => {
-    const [isOpen, setIsOpen] = useState(false)
+const ZoomImage: React.FC<ZoomImageProps> = ({ src, alt, sizes, onLoad }) => {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [transformOrigin, setTransformOrigin] = useState('center center')
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect) return
+
+        const x = ((e.clientX - rect.left) / rect.width) * 100
+        const y = ((e.clientY - rect.top) / rect.height) * 100
+        setTransformOrigin(`${x}% ${y}%`)
+    }
+
+    const handleMouseLeave = () => {
+        setTransformOrigin('center center')
+    }
 
     return (
-        <>
-            {/* Thumbnail */}
-            <div
-                className="relative w-full h-64 cursor-zoom-in"
-                onClick={() => setIsOpen(true)}
-            >
-                <Image src={src} alt={alt} fill className="object-cover" />
-            </div>
-
-            {/* Modal */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-                    onClick={() => setIsOpen(false)}
-                >
-                    <button
-                        className="absolute top-4 right-4 text-white text-2xl"
-                        onClick={() => setIsOpen(false)}
-                    >
-                        <X />
-                    </button>
-                    <div className="relative w-[80vw] h-[80vh]">
-                        <Image src={src} alt={alt} fill className="object-contain" />
-                    </div>
+        <div
+            ref={containerRef}
+            className="relative w-full h-64 overflow-hidden cursor-zoom-in border bg-white"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+        >
+            {src ? (
+                <Image
+                    src={src}
+                    alt={alt}
+                    fill
+                    className="object-cover transition-transform duration-300 ease-out hover:scale-150"
+                    style={{ transformOrigin }}
+                    sizes={sizes || '100vw'}
+                    priority={true}
+                    onLoad={onLoad}
+                />
+            ) : (
+                <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500">
+                    Image not available
                 </div>
             )}
-        </>
+        </div>
     )
 }
 

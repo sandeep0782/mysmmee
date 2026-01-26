@@ -30,6 +30,6 @@
     "next.config.mjs",
     "src/app/components/admin/AdminLayout.txs",
     "src/app/products/page"
-  ],
+, "src/app/products/[slug]/page"  ],
   "exclude": ["node_modules"]
 }

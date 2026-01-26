@@ -247,6 +247,8 @@ export default function Header() {
             <Button
               onClick={handleSearch}
               className=" rounded-r-full rounded-l-none bg-gray-100 border border-l-0 border-gray-300 hover:bg-gray-200 h-11 px-6"
+              aria-label="Search products"
+
             >
               <Search className="h-5 w-5 text-gray-700" />
             </Button>
@@ -284,8 +286,10 @@ export default function Header() {
           </DropdownMenu>
           <Link href="/checkout/cart">
             <div className="relative">
-              <Button variant="ghost" className="relative">
-                <ShoppingBag className="h-5 w-5 mr-2" />
+              <Button variant="ghost" className="relative" aria-label="View cart"
+              >
+                <ShoppingBag className="h-5 w-5 mr-2"
+                />
                 Bag
                 {user && cartItemsCount > 0 && (
                   <span className="absolute top-2 left-5 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full px-1 text-xs">
@@ -302,7 +306,7 @@ export default function Header() {
       <div className="container mx-auto flex lg:hidden items-center justify-between p-4">
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Open menu">
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
@@ -347,6 +351,8 @@ export default function Header() {
               variant="ghost"
               className="rounded-r-full rounded-l-none bg-gray-100 border border-l-0 border-gray-300 hover:bg-gray-200 h-11 px-4"
               onClick={handleSearch}
+              aria-label="Search products"
+
             >
               <Search className="h-5 w-5 text-gray-700" />
             </Button>

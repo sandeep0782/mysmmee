@@ -113,20 +113,21 @@ export default function Homepage() {
 
       {/* shop By Category Section */}
       <ShopByCategory />
-      
+
       {/* Newly Added Books Section */}
       <NewBooks />
 
       {/* shop By Category Section */}
       <ShopByBrands />
-      <Button
-        size="lg"
-        className="flex mt-10 mb-10 mx-auto bg-primary hover:bg-primary_hover px-8 py-6 rounded-xl"
-      >
-        <Link href="/products">
-          <div className="text-sm ">Explore All Products</div>
+      <div className="flex items-center">
+        <Link
+          href="/products"
+          className="inline-flex mt-10 mb-10 mx-auto items-center justify-center bg-primary hover:bg-primary_hover text-white px-8 py-4 rounded-xl text-sm transition"
+        >
+          Explore All Products
         </Link>
-      </Button>
+      </div>
+
     </main>
   );
 }

@@ -100,7 +100,7 @@ const ShopByBrands = () => {
                                                                 <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
                                                                     <Image
                                                                         src={brand.logo}
-                                                                        alt={brand.name}
+                                                                        alt={`Cover image for ${brand.name} brand`}
                                                                         fill
                                                                         className="object-cover rounded-lg"
                                                                     />
@@ -165,4 +165,3 @@ const ShopByBrands = () => {
 };
 
 export default ShopByBrands;
-    

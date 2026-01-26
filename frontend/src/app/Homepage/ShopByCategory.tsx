@@ -103,7 +103,7 @@ const ShopByCategory = () => {
                                 <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
                                   <Image
                                     src={category.image}
-                                    alt={category.name}
+                                    alt={`Cover image for ${category.name} category`}
                                     fill
                                     className="object-cover rounded-lg"
                                   />
@@ -136,6 +136,7 @@ const ShopByCategory = () => {
             <>
               <button
                 onClick={prevSlide}
+                aria-label="Previous category slide"
                 className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hidden sm:flex"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -143,10 +144,12 @@ const ShopByCategory = () => {
 
               <button
                 onClick={nextSlide}
+                aria-label="Next category slide"
                 className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md hidden sm:flex"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
+
 
               {/* ================= DOTS ================= */}
               <div className="mt-6 flex justify-center gap-2 sm:gap-3">
