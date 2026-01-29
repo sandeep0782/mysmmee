@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { IProduct } from "../models/Products";
+import { IProduct } from "../models/Product";
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ const sendEmail = async (to: string, subject: string, html: string) => {
 export const sendVerificationEmail = async (
   to: string,
   token: string,
-  name: string
+  name: string,
 ) => {
   const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${token}`;
   const html = `
@@ -111,7 +111,7 @@ export const sendVerificationEmail = async (
 export const sendPasswordResetEmail = async (
   to: string,
   token: string,
-  name: string
+  name: string,
 ) => {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
   const html = `
@@ -318,7 +318,7 @@ export const sendPasswordResetEmail = async (
 
 export const sendProductAdvertisement = async (
   to: string,
-  product: IProduct
+  product: IProduct,
 ) => {
   const productUrl = `${process.env.FRONTEND_URL}/products/${product.slug}`;
 
@@ -409,14 +409,14 @@ export const sendProductAdvertisement = async (
       <h1>${product.title}</h1>
       <p>${product.description || "No description available."}</p>
       <p class="price">Price: $${product.price} | Final Price: $${
-    product.finalPrice
-  }</p>
+        product.finalPrice
+      }</p>
 
       ${
         product.images?.length
           ? `<table class="images-table"><tr>${product.images
               .map(
-                (img) => `<td><img src="${img}" alt="${product.title}" /></td>`
+                (img) => `<td><img src="${img}" alt="${product.title}" /></td>`,
               )
               .join("")}</tr></table>`
           : ""

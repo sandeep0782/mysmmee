@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Products from "../models/Products";
+import Products from "../models/Product";
 import User from "../models/User";
 import EmailCampaign from "../models/EmailCampaign";
 import EmailCampaignRecipient from "../models/EmailCampaignRecipient";
@@ -108,5 +108,3 @@ export const TestTemplate = async (req: Request, res: Response) => {
     return response(res, 500, err.message || "Server error");
   }
 };
-
-

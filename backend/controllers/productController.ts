@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Product, { IProduct } from "../models/Products";
+import Product, { IProduct } from "../models/Product";
 import { response } from "../utils/responseHandler";
 import { uploadFileToCloudinary } from "../config/cloudnaryConfig";
 import brand from "../models/Brands";
@@ -55,13 +55,13 @@ export const createProduct = async (req: Request, res: Response) => {
       return response(
         res,
         400,
-        "Complete bank details are required for Bank Account payment mode."
+        "Complete bank details are required for Bank Account payment mode.",
       );
     }
 
     // Upload each file to Cloudinary and store the resulting URLs
     const uploadPromises = images.map((file) =>
-      uploadFileToCloudinary(file as any)
+      uploadFileToCloudinary(file as any),
     );
     const uploadedImages = await Promise.all(uploadPromises);
     const imageUrls = uploadedImages.map((image) => image.secure_url);
@@ -107,7 +107,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
       .populate("category", "name slug")
       .populate("season", "name slug")
       .populate("articleType", "name slug"); // <-- add this line
-      
+
     response(res, 200, "Products fetched successfully", products);
   } catch (error) {
     response(res, 500, "Error fetching products");

@@ -1,7 +1,7 @@
 import EmailCampaign from "../models/EmailCampaign";
 import EmailCampaignRecipient from "../models/EmailCampaignRecipient";
 import { sendProductAdvertisement } from "../config/emailConfig";
-import { IProduct } from "../models/Products";
+import { IProduct } from "../models/Product";
 
 const BATCH_SIZE = 100; // emails per batch
 

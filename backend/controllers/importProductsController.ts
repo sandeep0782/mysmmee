@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import XLSX from "xlsx";
 import slugify from "slugify";
-import Product from "../models/Products";
+import Product from "../models/Product";
 import Brand from "../models/Brands";
 import Season from "../models/Season";
 import Color from "../models/Color";

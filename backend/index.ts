@@ -27,6 +27,7 @@ import "./services/cron"; // ✅ make sure cron runs
 import articleTypeRoutes from "./routes/articleTypeRoutes";
 import { getProductMenu } from "./controllers/menuController";
 import reviewRoutes from "./routes/reviewRoutes";
+import listingRoutes from "./routes/listingRoutes";
 
 dotenv.config();
 
@@ -78,6 +79,7 @@ app.use("/api/season", seasonRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/admin", adminRoute);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/listings", listingRoutes);
 
 app.use("/api", importRoutes); // Now POST /api/products/import works
 app.use("/api", importUserRoutes);

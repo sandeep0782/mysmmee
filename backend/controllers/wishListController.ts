@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Wishlist from "../models/wishList";
-import Product from "../models/Products";
+import Product from "../models/Product";
 import { response } from "../utils/responseHandler";
 
 export const addToWishlist = async (req: Request, res: Response) => {

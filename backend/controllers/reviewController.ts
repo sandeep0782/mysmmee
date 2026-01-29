@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Review from "../models/Review";
-import Product from "../models/Products";
+import Product from "../models/Product";
 import { response } from "../utils/responseHandler";
 
 /**

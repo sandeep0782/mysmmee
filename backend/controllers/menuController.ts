@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Product from "../models/Products";
+import Product from "../models/Product";
 import Category from "../models/Category";
 import ArticleType from "../models/ArticleType";
 import { response } from "../utils/responseHandler";
@@ -73,12 +73,12 @@ export const getProductMenu = async (req: Request, res: Response) => {
      */
     const menu = categories.map((category) => {
       const categoryAggregation = aggregation.find(
-        (agg) => String(agg._id) === String(category._id)
+        (agg) => String(agg._id) === String(category._id),
       );
 
       const mappedArticleTypes =
         categoryAggregation?.articleTypes?.map((articleId) =>
-          articleTypes.find((a) => String(a._id) === String(articleId))
+          articleTypes.find((a) => String(a._id) === String(articleId)),
         ) ?? [];
 
       return {

@@ -20,6 +20,7 @@ import {
     Tag,
     Flag,
     Megaphone,
+    BookAudio,
 } from "lucide-react";
 
 type SidebarProps = {
@@ -35,6 +36,7 @@ const menuItems = [
     { icon: <Film className="w-5 h-5" />, label: "Categories", href: "/admin/category" },
     { icon: <Palette className="w-5 h-5" />, label: "Colors", href: "/admin/colors" },
     { icon: <Music className="w-5 h-5" />, label: "Article Type", href: "/admin/articleType" },
+    { icon: <BookAudio className="w-5 h-5" />, label: "Listing", href: "/admin/listing" },
     { icon: <Package className="w-5 h-5" />, label: "Products", href: "/admin/product" },
     { icon: <Package className="w-5 h-5" />, label: "Pending Approvals", href: "/admin/product" },
     { icon: <Database className="w-5 h-5" />, label: "Import", href: "/admin/import" },
