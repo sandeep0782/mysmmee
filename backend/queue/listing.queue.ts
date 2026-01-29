@@ -12,4 +12,7 @@ export const connection = new IORedis({
   maxRetriesPerRequest: null, // ✅ must be null for BullMQ
 });
 
+connection.on("connect", () => console.log("✅ Redis connected!"));
+connection.on("error", (err) => console.error("❌ Redis error:", err));
+
 export const listingQueue = new Queue("listing-processing", { connection });
