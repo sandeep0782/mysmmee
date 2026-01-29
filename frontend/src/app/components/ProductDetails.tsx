@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Heart, Loader2, ShoppingCart, Truck, File } from 'lucide-react'
+import { Heart, Loader2, ShoppingCart, Truck } from 'lucide-react'
 import { BookDetails } from '@/types/type'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
@@ -12,10 +12,8 @@ import { addToCart } from '@/store/slices/cartSlice'
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { useAddToCartMutation, useAddToWishlistMutation, useRemoveFromWishlistMutation } from '@/store/api'
 import { toggleLoginDialog } from '@/store/slices/userSlice'
-import ZoomImage from './ZoomImage'
 import ReviewsSection from './Review'
 import { ShareButton } from './Share'
-import NoData from '@/lib/NoData'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -34,9 +32,9 @@ const ProductDetails = ({ product }: Props) => {
     const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null)
     const [isDeliverable, setIsDeliverable] = useState<boolean | null>(null)
     const [isAddtoCart, setIsAddtoCart] = useState(false)
-    const [returnOption, setReturnOption] = useState<"yes" | "no" | null>(null) // mandatory return choice
+    const [returnOption, setReturnOption] = useState<"yes" | "no" | null>(null)
 
-    const DELIVERABLE_PINCODES_SET = new Set<string>(["110001", "110002", "110003"]) // example
+    const DELIVERABLE_PINCODES_SET = new Set<string>(["110001", "110002", "110003"]) // example pins
 
     const [addToCartMutation] = useAddToCartMutation()
     const [addToWishlistMutation] = useAddToWishlistMutation()
@@ -45,6 +43,7 @@ const ProductDetails = ({ product }: Props) => {
     const isInCart = cartItems?.some(item => item.product._id === product._id)
     const router = useRouter()
 
+    // Add to cart handler
     const handleAddToCart = async () => {
         if (!user) {
             toast("Please login to add to cart 🔒")
@@ -70,6 +69,7 @@ const ProductDetails = ({ product }: Props) => {
         }
     }
 
+    // Wishlist handler
     const handleAddToWishlist = async (productId: string) => {
         if (!user) {
             toast("Please login to add to wishlist 🔒")
@@ -90,6 +90,7 @@ const ProductDetails = ({ product }: Props) => {
         }
     }
 
+    // Delivery check
     const handleCheckDelivery = () => {
         const pin = pinCode.trim()
         if (!pin || pin.length !== 6) {
@@ -112,10 +113,10 @@ const ProductDetails = ({ product }: Props) => {
     const productImages = product?.images || []
 
     const formatTotalRatings = (count: number) => {
-        if (count >= 1000000) return (count / 1000000).toFixed(1) + "M";
-        if (count >= 1000) return (count / 1000).toFixed(1) + "k";
-        return count.toString();
-    };
+        if (count >= 1000000) return (count / 1000000).toFixed(1) + "M"
+        if (count >= 1000) return (count / 1000).toFixed(1) + "k"
+        return count.toString()
+    }
 
     return (
         <div className="min-h-screen">
@@ -140,8 +141,7 @@ const ProductDetails = ({ product }: Props) => {
                     <span>{product.description}</span>
                 </nav>
 
-                <div className="grid gap-4 md:grid-cols-[1.8fr_1.2fr] ">
-                    {/* Images Section */}
+                <div className="grid gap-4 md:grid-cols-[1.8fr_1.2fr]">
                     {/* Images Section */}
                     <div className="grid grid-cols-2 gap-2">
                         {productImages.map((image, index) => (
@@ -149,30 +149,30 @@ const ProductDetails = ({ product }: Props) => {
                                 key={index}
                                 className="relative w-full border bg-white overflow-hidden aspect-[3/4]"
                             >
-                                {/* Loader while image is loading */}
                                 {!loadedImages[index] && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
                                         <Loader2 className="animate-spin h-6 w-6 text-gray-400" />
                                     </div>
                                 )}
 
-                                {/* ZoomImage Thumbnail */}
-                                <ZoomImage
+                                {/* Simple Image without zoom */}
+                                <Image
                                     src={image as string}
                                     alt={`${product.title} ${index + 1}`}
-                                    onLoad={() => {
-                                        // mark this image as loaded
+                                    fill
+                                    className="object-cover"
+                                    onLoadingComplete={() => {
                                         setLoadedImages((prev) => {
                                             const newLoaded = [...prev]
                                             newLoaded[index] = true
                                             return newLoaded
                                         })
                                     }}
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             </div>
                         ))}
                     </div>
+
                     {/* Product Details Section */}
                     <div className="space-y-6">
                         <div className="space-y-2">
@@ -211,7 +211,7 @@ const ProductDetails = ({ product }: Props) => {
                                     <h1 className="text-[rgb(3,166,133)] text-sm font-bold">inclusive of all taxes</h1>
                                 </div>
 
-                                {/* Return Facility - mandatory */}
+                                {/* Return Facility */}
                                 <div className="flex flex-col gap-2 mt-4">
                                     <span className="font-medium">Avail Return Facility by paying only ₹100</span>
                                     <div className="flex gap-4 items-center">
@@ -319,7 +319,7 @@ const ProductDetails = ({ product }: Props) => {
                                 </div>
                                 <div className="text-gray-600">Please enter PIN code to check delivery time & Pay on Delivery Availability</div>
 
-                                {/* Product Details */}
+                                {/* Reviews */}
                                 <div className="border-t border-gray-300 mt-4"></div>
                                 <ReviewsSection product={product} user={user} />
                             </div>
