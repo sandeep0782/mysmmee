@@ -54,7 +54,7 @@ const Products = () => {
 
     const genderParam = searchParams.get("gender"); // e.g., "men"
 
-const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+    const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
 
 
@@ -214,18 +214,18 @@ const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
     return (
         <div className="min-h-screen bg-white">
             <div className="w-[95%] mx-auto px-4 py-8">
-                <nav className="mb-4 flex items-center gap-2 text-muted-foreground">
+                <nav className="mb-4 hidden md:flex items-center gap-2 text-muted-foreground">
                     <Link href="/" className="text-blue-500 hover:underline">Home</Link>
                     <span>/</span>
                     <span>Products</span>
                 </nav>
                 {/* <h1 className="mb-8 text-2xl font-bold text-gray-800">Products</h1> */}
 
-                <div className='flex justify-between'>
+                <div className="hidden md:flex justify-between items-center">
                     <h1 className="mb-8 text-2xl font-bold text-gray-800">Products</h1>
                     <TopFilters sortOption={sortOption} setSortOption={setSortOption} />
-
                 </div>
+
                 <div className='grid gap-8 md:grid-cols-[280px_1fr]'>
                     {/* Left Sidebar Filter */}
                     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto hidden md:block">
@@ -239,11 +239,14 @@ const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
                     </div>
 
                     {/* Mobile Filter Overlay */}
+                    {/* Mobile Filter Overlay */}
                     {mobileFilterOpen && (
-                        <div className="fixed inset-0 z-50 bg-black/50 flex justify-end">
-                            <div className="w-3/4 bg-white h-full p-4 overflow-y-auto">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-xl font-bold">Filters</h2>
+                        <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-end">
+                            <div className="w-full max-h-[80%] bg-white rounded-t-xl flex flex-col">
+
+                                {/* Header (fixed) */}
+                                <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                                    <h2 className="text-lg font-bold">Filters</h2>
                                     <button
                                         onClick={() => setMobileFilterOpen(false)}
                                         className="text-gray-500 font-bold text-2xl"
@@ -251,27 +254,40 @@ const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
                                         &times;
                                     </button>
                                 </div>
-                                <ProductFilters
-                                    selectedBrand={selectedBrand}
-                                    selectedGender={selectedGender}
-                                    selectedColor={selectedColor}
-                                    selectedCategory={selectedCategory}
-                                    toggleFilter={toggleFilter}
-                                />
+
+                                {/* Scrollable filter content */}
+                                <div className="overflow-y-auto p-4 flex-1">
+                                    <ProductFilters
+                                        selectedBrand={selectedBrand}
+                                        selectedGender={selectedGender}
+                                        selectedColor={selectedColor}
+                                        selectedCategory={selectedCategory}
+                                        toggleFilter={toggleFilter}
+                                    />
+                                </div>
+
+                                {/* Optional Apply Button */}
+                                {/* <Button className="m-4 w-full bg-primary text-white">Apply Filters</Button> */}
                             </div>
                         </div>
                     )}
 
-<div className="flex justify-between items-center mb-4 md:hidden">
-  <Button
-    onClick={() => setMobileFilterOpen(true)}
-    className="bg-pink-500 text-white px-4 py-2 rounded"
-  >
-    Filter
-  </Button>
 
-  <TopFilters sortOption={sortOption} setSortOption={setSortOption} />
-</div>
+                    {/* Mobile Bottom Filter & Sort */}
+                    <div className="flex px-4 py-2 bg-white fixed bottom-0 left-0 right-0 z-40 shadow-t md:hidden gap-2">
+                        <Button
+                            onClick={() => setMobileFilterOpen(true)}
+                            className="bg-primary text-white text-sm h-12 flex-1 flex items-center justify-center rounded"
+                        >
+                            Filter
+                        </Button>
+
+                        <TopFilters
+                            sortOption={sortOption}
+                            setSortOption={setSortOption}
+                            className="flex-1 h-12 flex items-center justify-center rounded border border-gray-300 bg-white text-sm"
+                        />
+                    </div>
 
 
                     {/* Main Product Area */}

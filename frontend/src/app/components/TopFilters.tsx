@@ -5,19 +5,18 @@ import { SelectValue } from '@radix-ui/react-select'
 interface TopFiltersProps {
     sortOption: string
     setSortOption: (value: string) => void
+    className?: string // ✅ optional className
 }
 
 const TopFilters: React.FC<TopFiltersProps> = ({
     sortOption,
     setSortOption,
-
+    className // ✅ destructure it
 }) => {
-    
     return (
-        <div className="flex justify-between items-center mb-6">
-            {/* Sort */}
+        <div className={`flex justify-center items-center ${className || ''}`}>
             <Select value={sortOption} onValueChange={setSortOption}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full h-full flex items-center justify-center">
                     <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
                 <SelectContent>

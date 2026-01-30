@@ -334,7 +334,7 @@ export default function Header() {
             alt="MYSMMEE Logo"
             width={150}
             height={100}
-            className=" h-6 md:h-10  w-10  md:w-auto"
+            className=" h-8 md:h-10  w-10  md:w-auto"
           />
         </Link>
         <div className="flex-1 px-4">
@@ -342,20 +342,51 @@ export default function Header() {
             <Input
               type="text"
               placeholder="Search products..."
-              className="flex-1 rounded-l-full rounded-r-none border border-gray-200 h-11 pl-4 text-sm focus:ring-0 focus:ring-offset-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="
+    flex-1 h-11 pl-4 text-sm
+    rounded-l-full rounded-r-none
+    border border-gray-200
+    focus:outline-none
+    focus:ring-0
+    focus:ring-offset-0
+    focus:shadow-none
+    focus-visible:outline-none
+    focus-visible:ring-0
+    focus-visible:ring-offset-0
+    focus-visible:shadow-none
+  "
             />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="rounded-r-full rounded-l-none bg-gray-100 border border-l-0 border-gray-300 hover:bg-gray-200 h-11 px-4"
-              onClick={handleSearch}
-              aria-label="Search products"
 
+
+            <button
+              aria-label="Search products"
+              className="
+    inline-flex items-center justify-center gap-2
+    whitespace-nowrap rounded-md text-sm font-medium
+    transition-colors
+    w-9 h-11 px-4
+    rounded-r-full rounded-l-none
+    bg-gray-100 border border-l-0 border-gray-300
+    hover:bg-gray-200
+    focus:outline-none
+    focus:ring-0
+    focus:ring-offset-0
+    focus:shadow-none
+    focus-visible:outline-none
+    focus-visible:ring-0
+    focus-visible:ring-offset-0
+    focus-visible:shadow-none
+    disabled:pointer-events-none disabled:opacity-50
+    [&_svg]:pointer-events-none
+    [&_svg]:size-4
+    [&_svg]:shrink-0
+  "
             >
               <Search className="h-5 w-5 text-gray-700" />
-            </Button>
+            </button>
+
           </div>
 
         </div>
