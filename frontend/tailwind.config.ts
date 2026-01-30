@@ -22,6 +22,13 @@ const config: Config = {
         secondary: "var(--secondary)",
         "secondary-hover": "var(--secondary-hover)",
         accent: "var(--accent)",
+
+        success: "var(--success)",
+        "success-hover": "var(--primary-hover)",
+        warning: "var(--warning)",
+        "warning-hover": "var(--warning-hover)",
+        danger: "var(--danger)",
+        "danger-hover": "var(--danger-hover)",
       },
       borderRadius: {
         lg: "var(--radius)",

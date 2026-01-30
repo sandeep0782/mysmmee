@@ -26,8 +26,12 @@
 
     /* Brand colors */
     --primary: #e80070;
-    --secondary: #6366f1;
+    --secondary: #7576d0;
     --accent: #f59e0b;
+
+    --primary-hover: #d52c7e;
+    --secondary-hover: #6366f1;
+    --accent-hover: #e2a233;
   }
 
   body {

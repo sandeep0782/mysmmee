@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { File, FileSpreadsheet, Heart, Loader2, ShoppingCart, Truck } from 'lucide-react'
+import { ArrowRight, ArrowRightFromLine, File, FileSpreadsheet, Heart, Loader2, ShoppingCart, Truck } from 'lucide-react'
 import { BookDetails } from '@/types/type'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
@@ -16,6 +16,7 @@ import ReviewsSection from './Review'
 import { ShareButton } from './Share'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import DeliveryCheck from './DeliveryCheck'
 
 type Props = {
     product: BookDetails
@@ -26,6 +27,7 @@ const ProductDetails = ({ product }: Props) => {
     const user = useSelector((state: RootState) => state.user.user)
     const cartItems = useSelector((state: RootState) => state.cart.items)
     const wishlist = useSelector((state: RootState) => state.wishlist.items)
+    const [showSizeError, setShowSizeError] = useState(false);
 
     const [loadedImages, setLoadedImages] = useState<boolean[]>(new Array(product.images?.length).fill(false))
     const [pinCode, setPinCode] = useState("")
@@ -232,27 +234,30 @@ const ProductDetails = ({ product }: Props) => {
                                             return (
                                                 <button
                                                     key={variant.sku}
-                                                    // disabled={isOutOfStock}
                                                     onClick={() => setSelectedVariant(variant)}
                                                     className={`
-            min-w-[48px] px-4 py-2 border rounded-md font-thin transition
-            ${isSelected
-                                                            ? "bg-red-700 border-red-600 text-white"
-                                                            : "border-red-600 text-red-600 hover:border-red-500 hover:text-red-500"
+    min-w-[48px] px-4 py-2 border rounded-full font-semibold transition
+    ${isSelected
+                                                            ? "border-primary text-primary"
+                                                            : "border-gray-500 text-black font-bold hover:border-primary"
                                                         }
-            ${isOutOfStock ? "opacity-40 cursor-not-allowed hover:border-red-600 hover:text-red-700" : ""}
-          `}
+    ${isOutOfStock ? " cursor-not-allowed" : ""}
+  `}
                                                 >
                                                     {sizeLabel}
                                                 </button>
+
                                             );
                                         })}
                                     </div>
 
                                     {/* Show "please select a size" only if variants exist */}
-                                    {!selectedVariant && product.variants.length > 0 && (
-                                        <p className="text-red-500 text-sm">Please select a size</p>
+                                    {showSizeError && !selectedVariant && (
+                                        <p className="text-red-500 text-sm mt-2">
+                                            Please select a size
+                                        </p>
                                     )}
+
                                 </div>
 
 
@@ -290,8 +295,8 @@ const ProductDetails = ({ product }: Props) => {
 
                                 {/* Action Buttons */}
                                 <div className="flex flex-wrap gap-4 mt-4">
-                                    <Button
-                                        className={`flex-[0.6] py-6 flex items-center justify-center cursor-pointer transition-colors ${isInCart ? "bg-green-600 hover:bg-green-700" : "bg-primary hover:bg-primary_hover"
+                                    {/* <Button
+                                        className={`flex-[0.6] py-6 flex items-center justify-center cursor-pointer transition-colors ${isInCart ? "bg-primary hover:bg-primary-hover" : "bg-primary hover:bg-primary-hover"
                                             }`}
                                         onClick={handleAddToCart}
                                         disabled={isAddtoCart || !selectedVariant}
@@ -303,8 +308,8 @@ const ProductDetails = ({ product }: Props) => {
                                             </>
                                         ) : isInCart ? (
                                             <>
-                                                <ShoppingCart className="mr-2 h-5 w-5" />
-                                                Go to Cart
+                                                Go to Bag
+                                                <ArrowRight className="mr-2 h-5 w-5" />
                                             </>
                                         ) : (
                                             <>
@@ -312,19 +317,60 @@ const ProductDetails = ({ product }: Props) => {
                                                 Buy Now
                                             </>
                                         )}
+                                    </Button> */}
+                                    <Button
+                                        type="button"
+                                        className="flex-[0.6] py-6 flex items-center justify-center gap-2 cursor-pointer transition-colors bg-primary hover:bg-primary-hover text-white"
+                                        disabled={isAddtoCart}
+                                        onClick={() => {
+                                            if (isInCart) {
+                                                router.push("/checkout/cart");
+                                                return;
+                                            }
+
+                                            if (!selectedVariant) {
+                                                setShowSizeError(true);
+                                                return;
+                                            }
+
+                                            setShowSizeError(false);
+                                            handleAddToCart();
+                                        }}
+                                    >
+                                        {isAddtoCart && (
+                                            <>
+                                                <Loader2 className="animate-spin h-5 w-5" />
+                                                <span>Adding to Cart</span>
+                                            </>
+                                        )}
+
+                                        {!isAddtoCart && isInCart && (
+                                            <>
+                                                <span>Go to Bag</span>
+                                                <ArrowRight className="h-5 w-5" />
+                                            </>
+                                        )}
+
+                                        {!isAddtoCart && !isInCart && (
+                                            <>
+                                                <ShoppingCart className="h-5 w-5" />
+                                                <span>Buy Now</span>
+                                            </>
+                                        )}
                                     </Button>
+
 
                                     <button
                                         onClick={() => product && handleAddToWishlist(product._id)}
                                         className={`flex-[0.4] py-2 border rounded-md flex items-center justify-center transition-colors duration-300 ${wishlist.some((w) => w.products.includes(product._id))
-                                            ? "bg-red-500 text-white border-red-500"
-                                            : "bg-white text-red-500 border-red-500 cursor-pointer"
+                                            ? "bg-primary text-white border-primary"
+                                            : "bg-white text-primary border-primary cursor-pointer"
                                             }`}
                                     >
                                         <Heart
                                             className={`h-4 w-4 mr-1 ${wishlist.some((w) => w.products.includes(product._id))
                                                 ? "fill-white text-white"
-                                                : "text-red-500 cursor-pointer"
+                                                : "text-primary cursor-pointer"
                                                 }`}
                                         />
                                         <span className="hidden md:inline cursor-pointer">
@@ -337,34 +383,11 @@ const ProductDetails = ({ product }: Props) => {
 
                                 {/* Delivery Section */}
                                 <div className="border-t border-gray-300 mt-4"></div>
-                                <div className="flex items-center gap-2 font-thin text-gray-900">
+                                <div className="flex items-center gap-2 font-semibold text-gray-900">
                                     <span>CHECK DELIVERY OPTION</span>
                                     <Truck className="h-5 w-5 text-gray-900" strokeWidth={1} />
                                 </div>
-                                <div className="w-full">
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Pin Code"
-                                            value={pinCode}
-                                            onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ""))}
-                                            maxLength={6}
-                                            className="w-full px-3 py-2 pr-24 border border-gray-300 rounded-md focus:outline-none focus:ring-0"
-                                        />
-                                        <button
-                                            onClick={handleCheckDelivery}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-100 text-red-500 font-medium px-3 py-1 rounded cursor-pointer hover:bg-red-200 transition"
-                                        >
-                                            Check
-                                        </button>
-                                    </div>
-                                    {deliveryMessage && (
-                                        <p className={`text-sm mt-2 ${isDeliverable ? "text-green-600" : "text-red-500"}`}>
-                                            {deliveryMessage}
-                                        </p>
-                                    )}
-                                </div>
-
+                                <DeliveryCheck />
                                 <div className="text-gray-600">Please enter PIN code to check delivery time & Pay on Delivery Availability</div>
 
                                 {/* Reviews */}

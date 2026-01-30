@@ -109,3 +109,4 @@ export const DELIVERABLE_PINCODES = [
   "400001",
   "560001",
 ];
+export const deliverablePinsSet: Set<string> = new Set(DELIVERABLE_PINCODES);
