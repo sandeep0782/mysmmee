@@ -66,13 +66,13 @@ export const removeFromCart = async (req: Request, res: Response) => {
 
 export const getCart = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
-    console.log(userId)
+    const userId = req.id; // use JWT auth, NOT req.params
+    console.log(userId);
     const cart = await Cart.findOne({ user: userId }).populate("items.product");
     if (!cart) {
       return response(res, 200, "Cart is empty", { items: [] });
     }
-    console.log(cart)
+    console.log(cart);
     response(res, 200, "Cart fetched successfully", cart);
   } catch (error) {
     console.error("Error fetching cart:", error);

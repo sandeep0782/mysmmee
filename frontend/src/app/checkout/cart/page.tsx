@@ -47,7 +47,7 @@ export default function CheckoutPage() {
   const { step, orderId } = useSelector((state: RootState) => state.checkout);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { data: cartData, isLoading: isCartLoading } = useGetCartQuery(user?._id);
+  const { data: cartData, isLoading: isCartLoading } = useGetCartQuery({});
   const [removeFromCartMutation] = useRemoveFromCartMutation();
   const cart = useSelector((state: RootState) => state.cart);
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
