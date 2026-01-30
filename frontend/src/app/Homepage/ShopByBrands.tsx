@@ -50,6 +50,13 @@ const ShopByBrands = () => {
         }
     }, [totalSlides, currentSlide]);
 
+    useEffect(() => {
+        if (brands.length) {
+            console.log("Brands loaded:", brands);
+            console.log("Brand logos:", brands.map(b => b.logo));
+        }
+    }, [brands]);
+
     /* ================= AUTO SLIDE ================= */
     useEffect(() => {
         if (totalSlides <= 1) return;
@@ -87,40 +94,17 @@ const ShopByBrands = () => {
                                         {brands
                                             .slice(slideIndex * itemsPerSlide, slideIndex * itemsPerSlide + itemsPerSlide)
                                             .map((brand) => (
-                                                <Card
-                                                    key={brand._id}
-                                                    className="w-[120px] sm:w-32 md:w-40 h-48 sm:h-56 md:h-60 relative overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
-                                                >
-                                                    <Link
-                                                        href={`/products?brand=${brand.slug}`}
-                                                        className="block w-full h-full"
-                                                    >
-                                                        <div className="relative w-full h-full overflow-hidden group rounded-lg">
-                                                            {brand.logo ? (
-                                                                <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
-                                                                    <Image
-                                                                        src={brand.logo}
-                                                                        alt={`Cover image for ${brand.name} brand`}
-                                                                        fill
-                                                                        className="object-cover rounded-lg"
-                                                                    />
-                                                                </div>
-                                                            ) : (
-                                                                <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded-lg">
-                                                                    <span className="text-gray-500 text-xs sm:text-sm">
-                                                                        No Logo
-                                                                    </span>
-                                                                </div>
-                                                            )}
-
-                                                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
-                                                                <h3 className="text-white text-center text-xs sm:text-sm font-semibold px-2 line-clamp-2">
-                                                                    {brand.name}
-                                                                </h3>
-                                                            </div>
-                                                        </div>
+                                                <Card key={brand._id} className="relative w-[120px] sm:w-32 md:w-40 h-48 sm:h-56 md:h-60 overflow-hidden shadow-md">
+                                                    <Link href={`/products?brand=${brand.slug}`} className="block w-full h-full relative">
+                                                        <Image
+                                                            src={brand.logo || "/placeholder.png"}
+                                                            alt={brand.name}
+                                                            fill
+                                                            className="object-cover rounded-lg"
+                                                        />
                                                     </Link>
                                                 </Card>
+
                                             ))}
                                     </div>
                                 </div>

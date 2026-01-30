@@ -2,7 +2,6 @@ import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
 
 const config: Config = {
-  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,13 +10,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        /* Core */
         background: "var(--background)",
-        foreground: "var(--foreground)",
-        primary: "var(--color-primary)",
-        primary_hover: "var(--color-primary-hover)",
+        text: "var(--text)",
+        white: "var(--white)",
+        black: "var(--black)",
 
-        secondary: "var(--color-secondary)",
-        accent: "var(--color-accent)",
+        /* Brand */
+        primary: "var(--primary)",
+        "primary-hover": "var(--primary-hover)",
+        secondary: "var(--secondary)",
+        "secondary-hover": "var(--secondary-hover)",
+        accent: "var(--accent)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -26,20 +30,12 @@ const config: Config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
@@ -50,4 +46,5 @@ const config: Config = {
   },
   plugins: [animatePlugin],
 };
+
 export default config;

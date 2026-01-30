@@ -1,3 +1,4 @@
+import BestOffers from '@/app/components/Offers'
 import ProductDetails from '@/app/components/ProductDetails' // make sure path is correct
 import { Metadata } from 'next'
 import React from 'react'
@@ -30,6 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: product.description || "Check out this product on our store",
         openGraph: {
             images: product.images || []
+        },
+        icons: {
+            icon: '/favicon.ico', // path to your favicon in /public
         }
     }
 }
@@ -39,6 +43,8 @@ const Page = async ({ params }: Props) => {
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/slug/${slug}`, {
         credentials: 'include',
+        cache: 'no-store', // 🔥 THIS
+
     })
     const productData = await res.json()
 
@@ -49,6 +55,7 @@ const Page = async ({ params }: Props) => {
     return (
         <div>
             <ProductDetails product={productData.data} />
+
         </div>
     )
 }

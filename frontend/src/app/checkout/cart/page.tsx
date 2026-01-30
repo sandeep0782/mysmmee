@@ -88,6 +88,8 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
+    console.log("Cart API data:", cartData);
+
     if (cartData?.success && cartData.data) {
       dispatch(setCart(cartData.data));
     }
@@ -304,7 +306,10 @@ export default function CheckoutPage() {
       />
     );
   }
-  if (cart.items.length === 0) {
+  if (isCartLoading) {
+    return <BookLoader />;
+  }
+  if (!isCartLoading && cart.items.length === 0) {
     return (
       <NoData
         message="Your cart is empty."
@@ -317,9 +322,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (isCartLoading || isOrderLoading) {
-    return <BookLoader />;
-  }
+
 
   return (
     <>

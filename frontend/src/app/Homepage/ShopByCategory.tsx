@@ -98,30 +98,21 @@ const ShopByCategory = () => {
                             href={`/products?articleType=${category.slug}`}
                             className="block w-full h-full"
                           >
-                            <div className="relative w-full h-full overflow-hidden group rounded-lg">
-                              {category.image ? (
-                                <div className="w-full h-full transform transition-transform duration-300 ease-in-out group-hover:scale-105">
-                                  <Image
-                                    src={category.image}
-                                    alt={`Cover image for ${category.name} category`}
-                                    fill
-                                    className="object-cover rounded-lg"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded-lg">
-                                  <span className="text-gray-500 text-xs sm:text-sm">
-                                    No Image
-                                  </span>
-                                </div>
-                              )}
-
-                              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
-                                <h3 className="text-white text-center text-xs sm:text-sm font-semibold px-2 line-clamp-2">
-                                  {category.name}
-                                </h3>
+                            {category.image ? (
+                              <div className="w-full h-full relative transform transition-transform duration-300 ease-in-out group-hover:scale-105">
+                                <Image
+                                  src={category.image}
+                                  alt={`Cover image for ${category.name} category`}
+                                  fill
+                                  className="object-cover rounded-lg"
+                                />
                               </div>
-                            </div>
+                            ) : (
+                              <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded-lg">
+                                <span className="text-gray-500 text-xs sm:text-sm">No Image</span>
+                              </div>
+                            )}
+
                           </Link>
                         </Card>
                       ))}

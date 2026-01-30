@@ -1,3 +1,51 @@
+export interface IVariant {
+  sku: string;
+  brandSize?: string; // e.g., "M", "L"
+  standardSize?: number;
+  isStandardSizeOnLabel?: boolean;
+  stock: number;
+  price: number;
+  finalPrice: number;
+  measurements?: {
+    bust?: number;
+    hip?: number;
+    waist?: number;
+    outseamLength?: number;
+    toFitWaist?: number;
+  };
+}
+export interface ISetDetails {
+  setType?: string;
+  sareeFabric?: string;
+  blouseFabric?: string;
+  blouseIncluded?: boolean;
+}
+
+export interface IFashionDetails {
+  fashionType?: string;
+  usage?: string;
+  occasion?: string;
+  year?: number;
+  pattern?: string;
+  printOrPatternType?: string;
+  ornamentation?: string;
+  border?: string;
+  trends?: boolean;
+  mainTrend?: string;
+  sustainable?: boolean;
+  stitch?: string;
+  careInstructions?: string;
+  sizeAndFitDescription?: string;
+  whereToWear?: string;
+  styleTip?: string;
+}
+
+export interface IMetadata {
+  styleId?: string;
+  styleGroupId?: string;
+  vendorSkuCode?: string;
+  vendorArticleNumber?: string;
+}
 export interface BookDetails {
   _id: string;
   title: string;
@@ -18,6 +66,10 @@ export interface BookDetails {
   description?: string;
   finalPrice: number;
   shippingCharge: string;
+  metadata?: IMetadata;
+  setDetails?: ISetDetails;
+  fashionDetails?: IFashionDetails;
+  variants: IVariant[];
   seller: UserData;
   paymentMode: "UPI" | "Bank Account";
   paymentDetails: {

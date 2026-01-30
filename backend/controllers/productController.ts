@@ -139,6 +139,7 @@ export const getProductBySlug = async (req: Request, res: Response) => {
     const { slug } = req.params;
 
     const product = await Product.findOne({ slug })
+      .populate("articleType")
       .populate("category")
       .populate("brand")
       .populate("season")

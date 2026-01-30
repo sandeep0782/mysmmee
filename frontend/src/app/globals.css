@@ -1,8 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap");
 
 @layer base {
   :root {
@@ -12,28 +12,27 @@
     /* Border radius */
     --radius: 0.5rem;
 
-    /* Light theme colors */
-    --color-bg: #ffffff;
-    --color-text: #111827;
-    --color-primary: #ff3d6c;
-    --color-primary-hover: #e03662; /* manually darker shade */
+    /* Core colors */
+    --white: #ffffff;
+    --black: #111827;
 
-    --color-secondary: #6366f1;
-    --color-accent: #f59e0b;
-  }
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --surface: #f9fafb;
 
-  /* Dark theme */
-  .dark {
-    --color-bg: #1f2937;
-    --color-text: #f9fafb;
-    --color-primary: #60a5fa;
-    --color-secondary: #818cf8;
-    --color-accent: #fbbf24;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --error: #ef4444;
+
+    /* Brand colors */
+    --primary: #e80070;
+    --secondary: #6366f1;
+    --accent: #f59e0b;
   }
 
   body {
     font-family: var(--font-assistant);
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: var(--background);
+    color: var(--text);
   }
 }
