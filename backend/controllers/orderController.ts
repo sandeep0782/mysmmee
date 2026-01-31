@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import Order from '../models/ProductOrder';
-import Cart from '../models/cartItems';
-import Razorpay from 'razorpay';
-import dotenv from 'dotenv'
-import { response } from '../utils/responseHandler';
-import crypto from 'crypto';
+import { Request, Response } from "express";
+import Order from "../models/ProductOrder";
+import Cart from "../models/cartItems";
+import Razorpay from "razorpay";
+import dotenv from "dotenv";
+import { response } from "../utils/responseHandler";
+import crypto from "crypto";
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -15,131 +15,156 @@ const razorpay = new Razorpay({
 export const createOrUpdateOrder = async (req: Request, res: Response) => {
   try {
     const userId = req?.id;
-    const {orderId, shippingAddress, paymentMethod, totalAmount, paymentDetails } = req.body;
+    const { orderId, shippingAddress, paymentMethod, paymentDetails } =
+      req.body;
 
-    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    // Fetch cart with populated products
+    const cart = await Cart.findOne({ user: userId })
+      .populate("items.product")
+      .lean();
     if (!cart || cart.items.length === 0) {
-      return response(res, 400, 'Cart is empty');
+      return response(res, 400, "Cart is empty");
     }
-     
+
+    // 1️⃣ Calculate total amount from cart
+    const totalItemsAmount = cart.items.reduce(
+      (acc, item) => acc + (item.product as any).finalPrice * item.quantity,
+      0,
+    );
+
+    const shippingCharges = cart.items.map((item) => {
+      const charge = (item.product as any)?.shippingCharge;
+      if (!charge) return 0;
+      if (typeof charge === "string") {
+        return charge.toLowerCase() === "free" ? 0 : Number(charge) || 0;
+      }
+      if (typeof charge === "number") return charge;
+      return 0;
+    });
+
+    const maximumShippingCharge = Math.max(0, ...shippingCharges);
+    const totalAmount = totalItemsAmount + maximumShippingCharge;
+
+    // 2️⃣ Find existing order or create a new one
     let order = await Order.findOne({ _id: orderId });
-    
+
     if (order) {
       // Update existing order
       order.shippingAddress = shippingAddress || order.shippingAddress;
       order.paymentMethod = paymentMethod || order.paymentMethod;
-      order.totalAmount = totalAmount || order.totalAmount;
+      order.totalAmount = totalAmount; // ✅ use calculated total
       if (paymentDetails) {
         order.paymentDetails = paymentDetails;
-        order.paymentStatus = 'completed';
-        order.status = 'processing';
+        order.paymentStatus = "completed";
+        order.status = "processing";
       }
     } else {
       // Create new order
       order = new Order({
         user: userId,
         items: cart.items,
-        totalAmount,
+        totalAmount, // ✅ calculated total
         shippingAddress,
         paymentMethod,
         paymentDetails,
-        paymentStatus: paymentDetails ? 'completed' : 'pending',
+        paymentStatus: paymentDetails ? "completed" : "pending",
       });
     }
 
     await order.save();
 
+    // Clear cart if payment is done
     if (paymentDetails) {
-      // Remove cart items after successful payment
-      await Cart.findOneAndUpdate(
-        { user: userId },
-        { $set: { items: [] } }
-      );
+      await Cart.findOneAndUpdate({ user: userId }, { $set: { items: [] } });
     }
 
-    response(res, 201, 'Order created/updated successfully', order);
+    response(res, 201, "Order created/updated successfully", order);
   } catch (error) {
     console.error(error);
-    response(res, 500, 'Error creating/updating order');
+    response(res, 500, "Error creating/updating order");
   }
 };
-
 
 export const getOrderById = async (req: Request, res: Response) => {
   try {
     const order = await Order.findById(req.params.id)
-    .populate('user', 'name email').populate('shippingAddress')
-    .populate({
-      path: 'items.product',
-      model: 'Product', 
-    });
+      .populate("user", "name email")
+      .populate("shippingAddress")
+      .populate({
+        path: "items.product",
+        model: "Product",
+      });
     if (!order) {
-      return response(res, 404, 'Order not found');
+      return response(res, 404, "Order not found");
     }
-    response(res, 200, 'Order fetched successfully', order);
+    response(res, 200, "Order fetched successfully", order);
   } catch (error) {
-    response(res, 500, 'Error fetching order');
+    response(res, 500, "Error fetching order");
   }
 };
 
 export const getUserOrders = async (req: Request, res: Response) => {
   try {
-    const userId = req?.id; 
-    const orders = await Order.find({ user: userId }).sort({ createdAt: -1 })
-      .populate('user', 'name email').populate('shippingAddress')
+    const userId = req?.id;
+    const orders = await Order.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .populate("user", "name email")
+      .populate("shippingAddress")
       .populate({
-        path: 'items.product',
-        model: 'Product', 
-      })
-    response(res, 200, 'Orders fetched successfully', orders);
+        path: "items.product",
+        model: "Product",
+      });
+    response(res, 200, "Orders fetched successfully", orders);
   } catch (error) {
-    response(res, 500, 'Error fetching orders');
+    response(res, 500, "Error fetching orders");
   }
 };
 
-export const createPaymentWithRazorpay = async (req: Request, res: Response) => {
+export const createPaymentWithRazorpay = async (
+  req: Request,
+  res: Response,
+) => {
   try {
     const { orderId } = req.body;
     const order = await Order.findById(orderId);
     if (!order) {
-      return response(res, 404, 'Order not found');
+      return response(res, 404, "Order not found");
     }
-     
+
     const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(order.totalAmount * 100), 
-      currency: 'INR',
+      amount: Math.round(order.totalAmount * 100),
+      currency: "INR",
       receipt: order._id.toString(),
     });
-    response(res, 200, 'Razorpay order created', { order: razorpayOrder });
+    response(res, 200, "Razorpay order created", { order: razorpayOrder });
   } catch (error) {
-    console.error('Error creating Razorpay order:', error);
-    response(res, 500, 'Error creating Razorpay order');
+    console.error("Error creating Razorpay order:", error);
+    response(res, 500, "Error creating Razorpay order");
   }
 };
 
 export const handleRazorpayWebhook = async (req: Request, res: Response) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET as string;
 
-  const shasum = crypto.createHmac('sha256', secret);
+  const shasum = crypto.createHmac("sha256", secret);
   shasum.update(JSON.stringify(req.body));
-  const digest = shasum.digest('hex');
+  const digest = shasum.digest("hex");
 
-  if (digest === req.headers['x-razorpay-signature']) {
+  if (digest === req.headers["x-razorpay-signature"]) {
     const paymentId = req.body.payload.payment.entity.id;
     const orderId = req.body.payload.payment.entity.order_id;
 
     await Order.findOneAndUpdate(
-      { 'paymentDetails.razorpay_order_id': orderId },
+      { "paymentDetails.razorpay_order_id": orderId },
       {
-        paymentStatus: 'completed',
-        status: 'processing',
-        'paymentDetails.razorpay_payment_id': paymentId,
-      }
+        paymentStatus: "completed",
+        status: "processing",
+        "paymentDetails.razorpay_payment_id": paymentId,
+      },
     );
 
-    response(res, 200, 'Webhook processed successfully');
+    response(res, 200, "Webhook processed successfully");
   } else {
-    response(res, 400, 'Invalid signature');
+    response(res, 400, "Invalid signature");
   }
 };
-

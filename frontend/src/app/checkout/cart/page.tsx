@@ -47,7 +47,7 @@ export default function CheckoutPage() {
   const { step, orderId } = useSelector((state: RootState) => state.checkout);
   const [showAddressDialog, setShowAddressDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { data: cartData, isLoading: isCartLoading } = useGetCartQuery({});
+  const { data: cartData, isLoading: isCartLoading } = useGetCartQuery(user?._id || '');
   const [removeFromCartMutation] = useRemoveFromCartMutation();
   const cart = useSelector((state: RootState) => state.cart);
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
@@ -88,7 +88,6 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
-    console.log("Cart API data:", cartData);
 
     if (cartData?.success && cartData.data) {
       dispatch(setCart(cartData.data));
@@ -114,7 +113,13 @@ export default function CheckoutPage() {
     if (quantity < 1) return; // prevent invalid quantity
     try {
       await updateCartItemQuantity({ productId, quantity }).unwrap();
-      toast.success("Cart updated!");
+      // 2️⃣ Update order total
+      if (orderId) {
+        // Only send orderId, backend will recalc total from cart
+        await createOrUpdateOrder({ updates: { orderId } }).unwrap();
+      }
+
+      toast.success("Cart and order updated!");
     } catch (error) {
       console.error(error);
       toast.error("Failed to update quantity");
@@ -190,9 +195,16 @@ export default function CheckoutPage() {
   const handleProceedToCheckout = async () => {
     if (step === "cart") {
       try {
-        const result = await createOrUpdateOrder({ updates: { totalAmount: finalAmount } }).unwrap();
+        // Prepare cart items with only productId and quantity
+        const cartItemsForOrder = cart.items.map(item => ({
+          productId: item.product._id,
+          quantity: item.quantity
+        }));
+
+        const result = await createOrUpdateOrder({ updates: { items: cartItemsForOrder } }).unwrap();
+
         if (result.success) {
-          toast.success('Order created successfully')
+          toast.success('Order created successfully');
           dispatch(setOrderId(result.data._id));
           dispatch(setCheckoutStep("address"));
         } else {

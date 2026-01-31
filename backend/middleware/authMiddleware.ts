@@ -25,8 +25,8 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
       return response(res, 401, 'Not authorized, user not found');
     }
     
-    req.id = decoded.userId;
-    req.role= decoded.role;
+    req.id = decoded.userId as string;
+    req.role= decoded.role as string;
     next();
   } catch (error) {
     return response(res, 401, 'Not authorized, token failed');
