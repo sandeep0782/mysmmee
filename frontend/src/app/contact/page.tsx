@@ -9,11 +9,11 @@ const ContactUsPage = () => {
         message: "",
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault();
         // Here you can integrate email sending logic or API
         alert("Thank you for contacting us!");
@@ -63,7 +63,7 @@ const ContactUsPage = () => {
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    rows="5"
+                                    rows={5}
                                     required
                                     className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
                                 ></textarea>
