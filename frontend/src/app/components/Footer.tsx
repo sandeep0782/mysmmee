@@ -24,7 +24,7 @@ export default function Footer() {
                   Women
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/products?gender=boys" className="hover:text-white">
                   Boys
                 </Link>
@@ -33,22 +33,22 @@ export default function Footer() {
                 <Link href="/products?gender=girls" className="hover:text-white">
                   Girls
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/products?gender=genz" className="hover:text-white">
                   GenZ
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/gift-cards" className="hover:text-white">
                   Gift Cards
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/insider" className="hover:text-white">
                   My MYSMME
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           {/* USEFUL LINKS */}
@@ -57,26 +57,26 @@ export default function Footer() {
               Useful Links
             </h3>
             <ul className="space-y-2">
-              <li>
+              {/* <li>
                 <Link href="/blog" className="hover:text-white">
                   Blog
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/careers" className="hover:text-white">
                   Careers
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/sitemap" className="hover:text-white">
                   Site Map
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/corporate" className="hover:text-white">
                   Corporate Information
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   href="https://admin.mysmme.com"
