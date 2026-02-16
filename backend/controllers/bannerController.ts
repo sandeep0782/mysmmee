@@ -58,15 +58,16 @@ export const createBanner = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllBanners = async (req: Request, res: Response) => {
-  try {
-    const banners = await Banner.find().sort({ position: 1 });
-    return response(res, 200, "Banners fetched successfully", banners);
-  } catch (error) {
-    console.error("Get Banners Error:", error);
-    return response(res, 500, "Failed to fetch banners");
-  }
-};
+  export const getAllBanners = async (req: Request, res: Response) => {
+    console.log("first")
+    try {
+      const banners = await Banner.find().sort({ position: 1 });
+      return response(res, 200, "Banners fetched successfully", banners);
+    } catch (error) {
+      console.error("Get Banners Error:", error);
+      return response(res, 500, "Failed to fetch banners");
+    }
+  };
 
 // export const updateBanner = async (req: Request, res: Response) => {
 //   let filePath: string | undefined;

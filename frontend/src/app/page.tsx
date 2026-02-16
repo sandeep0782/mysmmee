@@ -41,6 +41,8 @@ export default function Homepage() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners`);
         const data = await res.json();
+        console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
         if (res.ok) {
           // Only use active banners and sort by position
           const activeBanners = (data.data || []).filter((b: Banner) => b.isActive);
