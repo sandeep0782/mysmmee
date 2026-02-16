@@ -54,6 +54,11 @@ export interface IMetadata {
   vendorArticleNumber?: string;
 }
 
+export interface IPublishStatus {
+  status?: number; // e.g., 0 = pending, 1 = approved, 2 = rejected
+  reviewedBy?: string; // admin user ID
+  reviewedAt?: Date;
+}
 // ------------------- Main Product Interface -------------------
 export interface IProduct extends Document {
   title: string;
@@ -81,6 +86,8 @@ export interface IProduct extends Document {
   tags: string[];
   images: string[];
   videos: string[];
+
+  publish?: IPublishStatus;
 
   rating: number;
   numReviews: number;

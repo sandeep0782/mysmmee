@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Download, UploadCloud, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,33 @@ import Link from "next/link";
 const AddListingPage: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [availableArticleTypes, setAvailableArticleTypes] = useState<any[]>([])
+    const [selectedArticleType, setSelectedArticleType] = useState<string>('')
+
     const router = useRouter();
+
+    // ===== Fetch available article types once on page load =====
+    useEffect(() => {
+        const fetchArticleTypes = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                if (!res.ok) throw new Error('Failed to fetch article types')
+                const data = await res.json()
+                console.log("data", data)
+                setAvailableArticleTypes(data.data || [])
+            } catch (error) {
+                console.error(error)
+                toast.error('Error fetching article types')
+            }
+        }
+
+        fetchArticleTypes()
+    }, [])
+
 
     // ===== File Selection =====
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,40 +81,97 @@ const AddListingPage: React.FC = () => {
         }
     };
 
-    // ===== Download Template =====
-    const handleDownloadTemplate = () => {
-        const headers = [
-            "Title", "Description", "Fabric", "Color", "Pattern", "Print Type",
-            "Price", "SKU", "Brand", "Status"
-        ];
+    // ===== Download Excel Template from Backend =====
+    const handleDownloadTemplate = async (articleTypeParam?: string) => {
+        const type = articleTypeParam || selectedArticleType
+        if (!type) {
+            toast.error('Please select an article type')
+            return
+        }
 
-        const csvContent = [headers.join(","), ""].join("\n");
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
+        try {
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/template/download?articleType=${type}`
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "listing_template.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+            const res = await fetch(url, { method: 'GET', credentials: 'include' })
+            if (!res.ok) {
+                toast.error('Failed to download template')
+                return
+            }
+
+            const blob = await res.blob()
+            const downloadUrl = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = downloadUrl
+            link.setAttribute('download', `product-template-${type}.xlsx`)
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            toast.success('Template downloaded successfully!')
+        } catch (error) {
+            console.error(error)
+            toast.error('Error downloading template')
+        }
+    }
+
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <Card className="mb-6">
                 <div className="p-4 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-gray-800">Listings</h1>
-
+                    <h1 className="text-2xl font-semibold text-gray-800">
+                        Import Products
+                    </h1>
                     <button
-                        onClick={handleDownloadTemplate}
-                        className="flex items-center gap-2 px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition cursor-pointer"
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm cursor-pointer"
                     >
                         <Download className="w-4 h-4" />
                         Template
                     </button>
                 </div>
             </Card>
+            {/* ===== Template Modal ===== */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-lg font-semibold mb-4">Select Article Type</h2>
+
+                        <select
+                            value={selectedArticleType}
+                            onChange={(e) => setSelectedArticleType(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg p-2 mb-4"
+                        >
+                            <option value="">Select Article Type</option>
+                            {availableArticleTypes.map((type: any) => (
+                                <option key={type._id} value={type.name}>
+                                    {type.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                disabled={!selectedArticleType}
+                                onClick={() => {
+                                    handleDownloadTemplate(selectedArticleType)
+                                    setIsModalOpen(false)
+                                }}
+                                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+                            >
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Card className=" mx-auto p-6 shadow-md">
                 <h1 className="text-xl font-semibold text-gray-800 mb-6">

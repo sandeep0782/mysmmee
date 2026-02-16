@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card'
 import { UploadCloud, FileText, X, Download } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 const Page = () => {
@@ -12,6 +12,31 @@ const Page = () => {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [availableArticleTypes, setAvailableArticleTypes] = useState<any[]>([])
+    const [selectedArticleType, setSelectedArticleType] = useState<string>('')
+
+    // ===== Fetch available article types once on page load =====
+    useEffect(() => {
+        const fetchArticleTypes = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articleTypes`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                if (!res.ok) throw new Error('Failed to fetch article types')
+                const data = await res.json()
+                console.log("data", data)
+                setAvailableArticleTypes(data.data || [])
+            } catch (error) {
+                console.error(error)
+                toast.error('Error fetching article types')
+            }
+        }
+
+        fetchArticleTypes()
+    }, [])
+
     // ===== File Selection =====
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -19,6 +44,39 @@ const Page = () => {
             setHeaders([])
             setRows([])
             setMessage(null)
+        }
+    }
+
+    // ===== Download Excel Template from Backend =====
+    const handleDownloadTemplate = async (articleTypeParam?: string) => {
+        const type = articleTypeParam || selectedArticleType
+        if (!type) {
+            toast.error('Please select an article type')
+            return
+        }
+
+        try {
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products/template/download?articleType=${type}`
+
+            const res = await fetch(url, { method: 'GET', credentials: 'include' })
+            if (!res.ok) {
+                toast.error('Failed to download template')
+                return
+            }
+
+            const blob = await res.blob()
+            const downloadUrl = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = downloadUrl
+            link.setAttribute('download', `product-template-${type}.xlsx`)
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            toast.success('Template downloaded successfully!')
+        } catch (error) {
+            console.error(error)
+            toast.error('Error downloading template')
         }
     }
 
@@ -38,23 +96,19 @@ const Page = () => {
         const [headerRow, ...bodyRows] = data
         setHeaders(headerRow as string[])
 
-        // Map rows and validate immediately
         const validatedRows = bodyRows.map((row) => {
             const rowObj: any = Object.fromEntries(
                 headerRow.map((key, i) => [key, row[i]])
             )
 
-            // Add _errors array to each row
             const errors: string[] = []
-
             if (!rowObj.Brand) errors.push('Brand')
             if (!rowObj.Season) errors.push('Season')
             if (!rowObj.Color) errors.push('Color')
             if (!rowObj.Category) errors.push('Category')
             if (!rowObj.Title) errors.push('Title')
-            if (!rowObj.UPI_ID) errors.push('UPI ID')   // ✅ Add this line
-            if (rowObj['Final Price'] > rowObj.Price)
-                errors.push('Final Price')
+            if (!rowObj.UPI_ID) errors.push('UPI ID')
+            if (rowObj['Final Price'] > rowObj.Price) errors.push('Final Price')
 
             rowObj._errors = errors
             return rowObj
@@ -99,7 +153,7 @@ const Page = () => {
             }
 
             setMessage('Products saved successfully!')
-            toast.success('Products saved successfully!') // ✅ Success toast
+            toast.success('Products saved successfully!')
             setFile(null)
             setRows([])
             setHeaders([])
@@ -120,24 +174,6 @@ const Page = () => {
         setMessage(null)
     }
 
-    const handleDownloadTemplate = () => {
-
-        const headers = ["Title", "Description", "Subject", "Author", "Edition", "Price", "Final Price", "Shipping Charge", "Class Type",
-            "Payment Mode", "Payment Details", "Brand", "Season", "Color", "Category", "Gender", "Condition", "Images"
-        ];
-        const csvContent = [headers.join(","), ""].join("\n");
-
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "product_template.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     return (
         <div className="min-h-screen bg-gray-100 p-6 rounded-lg">
             {/* ===== Header ===== */}
@@ -147,7 +183,7 @@ const Page = () => {
                         Import Products
                     </h1>
                     <button
-                        onClick={handleDownloadTemplate}
+                        onClick={() => setIsModalOpen(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm cursor-pointer"
                     >
                         <Download className="w-4 h-4" />
@@ -155,6 +191,48 @@ const Page = () => {
                     </button>
                 </div>
             </Card>
+
+            {/* ===== Template Modal ===== */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+                        <h2 className="text-lg font-semibold mb-4">Select Article Type</h2>
+
+                        <select
+                            value={selectedArticleType}
+                            onChange={(e) => setSelectedArticleType(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg p-2 mb-4"
+                        >
+                            <option value="">Select Article Type</option>
+                            {availableArticleTypes.map((type: any) => (
+                                <option key={type._id} value={type.name}>
+                                    {type.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                disabled={!selectedArticleType}
+                                onClick={() => {
+                                    handleDownloadTemplate(selectedArticleType)
+                                    setIsModalOpen(false)
+                                }}
+                                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+                            >
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ===== File Upload ===== */}
             {!rows.length && (
@@ -208,7 +286,7 @@ const Page = () => {
 
                         <div className="mt-6 flex justify-end gap-3">
                             <button
-                                onClick={() => setFile(null)}
+                                onClick={handleCancelImport}
                                 className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
                             >
                                 Cancel

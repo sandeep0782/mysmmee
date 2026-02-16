@@ -39,31 +39,40 @@ const ListingPage: React.FC = () => {
     /* ================= POLLING ================= */
     useEffect(() => {
         const interval = setInterval(async () => {
-            // check if there are pending listings
-            const pendingListings = listings.filter((l) => l.status === "pending");
-            if (pendingListings.length === 0) return;
-
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/listings`, {
-                    credentials: "include",
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message);
-
-                // Update only the listings that changed
-                setListings((prev) =>
-                    prev.map((listing) => {
-                        const updated = data.data.find((l: Listing) => l._id === listing._id);
-                        return updated ? { ...listing, ...updated } : listing;
-                    })
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/listings`,
+                    { credentials: "include" }
                 );
-            } catch (err: any) {
-                console.error("Polling failed:", err.message);
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                setListings((prev) => {
+                    // only update if something actually changed
+                    let changed = false;
+
+                    const updated = prev.map((listing) => {
+                        const fresh = data.data.find((l: Listing) => l._id === listing._id);
+                        if (!fresh) return listing;
+
+                        if (fresh.status !== listing.status) {
+                            changed = true;
+                            return { ...listing, ...fresh };
+                        }
+                        return listing;
+                    });
+
+                    return changed ? updated : prev;
+                });
+            } catch (err) {
+                console.error("Polling failed:", err);
             }
-        }, 5000); // poll every 5 seconds
+        }, 5000);
 
         return () => clearInterval(interval);
-    }, [listings]);
+    }, []); // ✅ EMPTY dependency array
 
     /* ================= DELETE ================= */
     const handleDelete = async (id: string) => {

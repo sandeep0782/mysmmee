@@ -12,7 +12,8 @@ export interface IListing extends Document {
     | "success"
     | "partial"
     | "failed"
-    | "skipped";
+    | "skipped"
+    | "error"
   errorFilePath?: string;
   skippedFilePath?: string;
   totalRows?: number;
@@ -42,6 +43,7 @@ const listingSchema = new Schema<IListing>(
         "partial",
         "failed",
         "skipped",
+        "error",
       ],
       default: "pending",
     },

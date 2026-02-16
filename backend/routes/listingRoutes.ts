@@ -6,6 +6,7 @@ import {
   getListings,
   deleteListing,
   processListingController,
+  articleTypedownloadExcelTemplate,
 } from "../controllers/listingController";
 import { authenticateUser } from "../middleware/authMiddleware";
 
@@ -46,8 +47,12 @@ router.post("/process/:listingId", authenticateUser, processListingController);
 // 3️⃣ Download Error Excel (if validation or image errors)
 router.get("/errors/:listingId", authenticateUser, downloadErrorFile);
 
-
 router.get("/", authenticateUser, getListings);
 router.delete("/:id", authenticateUser, deleteListing);
+
+router.get(
+  "/template/download",
+  articleTypedownloadExcelTemplate,
+);
 
 export default router;

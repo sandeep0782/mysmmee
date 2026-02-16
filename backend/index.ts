@@ -28,6 +28,7 @@ import articleTypeRoutes from "./routes/articleTypeRoutes";
 import { getProductMenu } from "./controllers/menuController";
 import reviewRoutes from "./routes/reviewRoutes";
 import listingRoutes from "./routes/listingRoutes";
+import "./queue/listing.worker"; // Worker should boot on server start
 
 dotenv.config();
 

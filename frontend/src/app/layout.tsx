@@ -12,9 +12,14 @@ const assistant = Assistant({
   display: "swap", // optional but recommended
 });
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mysmme.com"),
   title: "Online Shopping for Women, Men, Kids fashion & Lifestyles - Mysmme",
-  description: "mysmme.com",
+  description: "Shop the latest fashion for women, men & kids at Mysmme.",
+  alternates: {
+    canonical: "/",
+  },
 };
+
 
 export default function RootLayout({
   children,

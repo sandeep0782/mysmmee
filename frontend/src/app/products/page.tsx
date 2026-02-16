@@ -24,6 +24,7 @@ import { useAddToCartMutation, useAddToWishlistMutation, useGetProductsQuery, us
 import { addToWishlistAction, removeFromWishlistAction } from '@/store/slices/wishlistSlice'
 import { addToCart } from '@/store/slices/cartSlice'
 import { useSearchParams } from 'next/navigation';
+import { toggleLoginDialog } from '@/store/slices/userSlice'
 
 
 
@@ -46,7 +47,7 @@ const Products = () => {
     const [addedProductIds, setAddedProductIds] = useState<Set<string>>(new Set());
     const [addToCartMutation] = useAddToCartMutation();
     const cart = useSelector((state: RootState) => state.cart);
-
+    const user = useSelector((state: RootState) => state.user.user);
 
     const searchParams = useSearchParams()
     const articleTypeSlug = searchParams.get('articleType'); // e.g., "kurta"
@@ -156,6 +157,11 @@ const Products = () => {
     const [removeFromWishlist] = useRemoveFromWishlistMutation();
 
     const handleAddToWishlist = async (productId: string) => {
+        if (!user) {
+            toast("Please login to add to cart 🔒");
+            dispatch(toggleLoginDialog());
+            return;
+        }
         try {
             const isWishlist = wishlist.some((item) => item.products.includes(productId));
             if (isWishlist) {
@@ -182,6 +188,11 @@ const Products = () => {
     };
 
     const handleAddToCart = async (product: BookDetails) => {
+        if (!user) {
+            toast("Please login to add to cart 🔒");
+            dispatch(toggleLoginDialog());
+            return;
+        }
         setAddingProductId(product._id);
         try {
             const result = await addToCartMutation({ productId: product._id, quantity: 1 }).unwrap();
