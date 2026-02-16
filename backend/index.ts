@@ -36,9 +36,17 @@ const app = express();
 
 app.use((req, res, next) => {
   const host = req.headers.host;
-  if (host && host.startsWith("mysmme.com")) {
-    return res.redirect(301, `https://www.mysmme.com${req.originalUrl}`);
+
+  // Redirect www → non-www
+  if (host && host.startsWith("www.mysmme.com")) {
+    return res.redirect(301, `https://mysmme.com${req.originalUrl}`);
   }
+
+  // Redirect HTTP → HTTPS
+  if (req.protocol === "http") {
+    return res.redirect(301, `https://mysmme.com${req.originalUrl}`);
+  }
+
   next();
 });
 
