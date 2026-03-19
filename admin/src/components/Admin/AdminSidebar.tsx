@@ -21,10 +21,7 @@ import {
     Flag,
     Megaphone,
     BookAudio,
-<<<<<<< HEAD
-=======
     User,
->>>>>>> 17ebb2a (banner)
 } from "lucide-react";
 
 type SidebarProps = {
