@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Plus, Search } from "lucide-react";
 import { toast } from "react-hot-toast";
-import Pagination from "@/components/Admnin/Pagination"; // import your reusable Pagination
+import Pagination from "@/components/Admin/Pagination"; // import your reusable Pagination
 
 const ITEMS_PER_PAGE = 4;
 

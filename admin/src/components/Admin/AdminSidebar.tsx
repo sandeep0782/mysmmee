@@ -21,6 +21,10 @@ import {
     Flag,
     Megaphone,
     BookAudio,
+<<<<<<< HEAD
+=======
+    User,
+>>>>>>> 17ebb2a (banner)
 } from "lucide-react";
 
 type SidebarProps = {
@@ -43,6 +47,7 @@ const menuItems = [
 ];
 
 const libraryItems = [
+    { icon: <User className="w-5 h-5" />, label: "Users", href: "/admin/users" },
     { icon: <List className="w-5 h-5" />, label: "Orders", href: "/admin/orders" },
     { icon: <Clock className="w-5 h-5" />, label: "Payment", href: "/admin/payment" },
     { icon: <Video className="w-5 h-5" />, label: "Review", href: "/admin/review" },

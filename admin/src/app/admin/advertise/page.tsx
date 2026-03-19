@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import toast from "react-hot-toast";
-import Pagination from "@/components/Admnin/Pagination";
-import CampaignStatus from "@/components/Admnin/CampaignStatus";
+import Pagination from "@/components/Admin/Pagination";
+import CampaignStatus from "@/components/Admin/CampaignStatus";
 
 interface Product {
   _id: string;
@@ -54,7 +54,8 @@ const AdvertisePage: React.FC = () => {
         throw new Error(`Invalid JSON response from ${url}`);
       }
 
-      if (!res.ok) throw new Error(data.message || `Request failed: ${res.status}`);
+      if (!res.ok)
+        throw new Error(data.message || `Request failed: ${res.status}`);
       return data;
     } catch (err: any) {
       throw new Error(err?.message || "Network error");
@@ -65,9 +66,12 @@ const AdvertisePage: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
-      const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
-        credentials: "include",
-      });
+      const data = await safeFetchJson(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+        {
+          credentials: "include",
+        },
+      );
       setProducts(data.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load products");
@@ -78,9 +82,12 @@ const AdvertisePage: React.FC = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`, {
-        credentials: "include",
-      });
+      const data = await safeFetchJson(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`,
+        {
+          credentials: "include",
+        },
+      );
 
       const campaignsMap: Record<string, Campaign> = {};
       (data.data || []).forEach((c: Campaign) => {
@@ -97,7 +104,6 @@ const AdvertisePage: React.FC = () => {
     }
   };
 
-
   // Poll campaigns every 3 seconds
   useEffect(() => {
     fetchCampaigns(); // initial fetch
@@ -108,7 +114,6 @@ const AdvertisePage: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
 
   const handleSendEmail = async (productId: string) => {
     try {
@@ -128,7 +133,7 @@ const AdvertisePage: React.FC = () => {
       // Trigger backend to start sending
       await safeFetchJson(
         `${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns/send-advertisement/${productId}`,
-        { method: "POST", credentials: "include" }
+        { method: "POST", credentials: "include" },
       );
 
       toast.success("Advertisement email sending started!");
@@ -136,10 +141,15 @@ const AdvertisePage: React.FC = () => {
       // Poll backend every 2 seconds until completed
       const interval = setInterval(async () => {
         try {
-          const data = await safeFetchJson(`${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`, {
-            credentials: "include",
-          });
-          const updatedCampaign = data.data.find((c: Campaign) => c.product === productId);
+          const data = await safeFetchJson(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/email-campaigns`,
+            {
+              credentials: "include",
+            },
+          );
+          const updatedCampaign = data.data.find(
+            (c: Campaign) => c.product === productId,
+          );
 
           if (updatedCampaign) {
             setCampaigns((prev) => ({
@@ -149,8 +159,12 @@ const AdvertisePage: React.FC = () => {
 
             if (updatedCampaign.status === "completed") {
               clearInterval(interval);
-              setSendingProducts((prev) => prev.filter((id) => id !== productId));
-              toast.success(`Campaign for ${updatedCampaign.product} completed!`);
+              setSendingProducts((prev) =>
+                prev.filter((id) => id !== productId),
+              );
+              toast.success(
+                `Campaign for ${updatedCampaign.product} completed!`,
+              );
             }
           }
         } catch {
@@ -163,7 +177,6 @@ const AdvertisePage: React.FC = () => {
     }
   };
 
-
   const totalPages = Math.max(1, Math.ceil(products.length / ITEMS_PER_PAGE));
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const paginatedData = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -172,7 +185,9 @@ const AdvertisePage: React.FC = () => {
     <div className="min-h-screen bg-gray-100 p-4">
       <Card className="mb-6">
         <div className="p-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">Product Advertisement</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Product Advertisement
+          </h1>
         </div>
       </Card>
 
@@ -186,19 +201,36 @@ const AdvertisePage: React.FC = () => {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="text-sm text-gray-600">
-                      <th scope="col" className="p-3 text-left">S.No.</th>
-                      <th scope="col" className="p-3 text-left">Image</th>
-                      <th scope="col" className="p-3 text-left">Name</th>
-                      <th scope="col" className="p-3 text-left">Description</th>
-                      <th scope="col" className="p-3 text-left">MRP</th>
-                      <th scope="col" className="p-3 text-left">Price</th>
-                      <th scope="col" className="p-3 text-center">Actions</th>
+                      <th scope="col" className="p-3 text-left">
+                        S.No.
+                      </th>
+                      <th scope="col" className="p-3 text-left">
+                        Image
+                      </th>
+                      <th scope="col" className="p-3 text-left">
+                        Name
+                      </th>
+                      <th scope="col" className="p-3 text-left">
+                        Description
+                      </th>
+                      <th scope="col" className="p-3 text-left">
+                        MRP
+                      </th>
+                      <th scope="col" className="p-3 text-left">
+                        Price
+                      </th>
+                      <th scope="col" className="p-3 text-center">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedData.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="p-4 text-center text-gray-500">
+                        <td
+                          colSpan={7}
+                          className="p-4 text-center text-gray-500"
+                        >
                           No products found
                         </td>
                       </tr>
@@ -207,8 +239,13 @@ const AdvertisePage: React.FC = () => {
                         const campaign = campaigns[product._id];
                         const isSending = sendingProducts.includes(product._id);
                         return (
-                          <tr key={product._id} className="border-t hover:bg-gray-50">
-                            <td className="p-3 text-gray-600">{startIndex + index + 1}</td>
+                          <tr
+                            key={product._id}
+                            className="border-t hover:bg-gray-50"
+                          >
+                            <td className="p-3 text-gray-600">
+                              {startIndex + index + 1}
+                            </td>
                             <td className="p-3 text-gray-600">
                               {product.images && product.images.length > 0 ? (
                                 <img
@@ -217,22 +254,36 @@ const AdvertisePage: React.FC = () => {
                                   className="h-12 w-12 object-cover rounded cursor-pointer"
                                   onClick={() => openZoom(product.images![0])}
                                 />
-                              ) : "-"}
+                              ) : (
+                                "-"
+                              )}
                             </td>
                             <td className="p-3 font-medium">{product.title}</td>
-                            <td className="p-3 text-gray-600">{product.description || "-"}</td>
-                            <td className="p-3 text-gray-600">{product.price || "-"}</td>
-                            <td className="p-3 text-gray-600">{product.finalPrice || "-"}</td>
+                            <td className="p-3 text-gray-600">
+                              {product.description || "-"}
+                            </td>
+                            <td className="p-3 text-gray-600">
+                              {product.price || "-"}
+                            </td>
+                            <td className="p-3 text-gray-600">
+                              {product.finalPrice || "-"}
+                            </td>
                             <td className="p-3 flex justify-center gap-2">
                               <button
-                                disabled={campaign?.status === "completed" || isSending}
+                                disabled={
+                                  campaign?.status === "completed" || isSending
+                                }
                                 onClick={() => handleSendEmail(product._id)}
-                                className={`px-4 py-1 rounded transition ${campaign?.status === "completed"
-                                  ? "bg-red-500 text-white cursor-not-allowed"
-                                  : "bg-blue-600 text-white hover:bg-blue-500 cursor-pointer"
-                                  }`}
+                                className={`px-4 py-1 rounded transition ${
+                                  campaign?.status === "completed"
+                                    ? "bg-red-500 text-white cursor-not-allowed"
+                                    : "bg-blue-600 text-white hover:bg-blue-500 cursor-pointer"
+                                }`}
                               >
-                                <CampaignStatus campaign={campaign} isSending={isSending} />
+                                <CampaignStatus
+                                  campaign={campaign}
+                                  isSending={isSending}
+                                />
                               </button>
 
                               <button
@@ -244,7 +295,6 @@ const AdvertisePage: React.FC = () => {
                               >
                                 Preview
                               </button>
-
                             </td>
                           </tr>
                         );
@@ -334,10 +384,11 @@ const AdvertisePage: React.FC = () => {
                       credentials: "include",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ email: previewEmail }),
-                    }
+                    },
                   );
                   const data = await res.json();
-                  if (!res.ok) throw new Error(data.message || "Failed to send preview");
+                  if (!res.ok)
+                    throw new Error(data.message || "Failed to send preview");
                   toast.success("Preview email sent successfully!");
                   setPreviewProduct(null);
                 } catch (err: any) {
@@ -346,8 +397,11 @@ const AdvertisePage: React.FC = () => {
                   setSendingPreview(false);
                 }
               }}
-              className={`px-4 py-2 rounded text-white ${sendingPreview ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500"
-                }`}
+              className={`px-4 py-2 rounded text-white ${
+                sendingPreview
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-500"
+              }`}
               disabled={sendingPreview}
             >
               {sendingPreview ? "Sending..." : "Send Preview"}
@@ -355,12 +409,10 @@ const AdvertisePage: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
 
 export default AdvertisePage;
-
 
 // ssh root@72.61.115.113
