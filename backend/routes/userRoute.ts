@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.put("/profile/update/:userId", authenticateUser, userController.editUserProfile);
 
+router.get("/", authenticateUser, userController.getAllUsers);
+
 export default router;
