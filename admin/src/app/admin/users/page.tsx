@@ -101,14 +101,15 @@ const Page = () => {
         </div>
 
         {/* Table */}
+        {/* Table */}
         <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full text-sm text-left table-fixed">
+          <table className="min-w-[600px] w-full text-sm text-left">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
               <tr>
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Email</th>
-                <th className="px-6 py-3">Role</th>
-                <th className="px-6 py-3">Created At</th>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Role</th>
+                <th className="px-4 py-3">Created At</th>
               </tr>
             </thead>
 
@@ -125,16 +126,16 @@ const Page = () => {
                     key={item.id || item.email}
                     className="border-t hover:bg-gray-50 transition"
                   >
-                    <td className="px-6 py-4 font-medium text-gray-800">
+                    <td className="px-4 py-4 font-medium text-gray-800">
                       {item.name}
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{item.email}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4 text-gray-600">{item.email}</td>
+                    <td className="px-4 py-4">
                       <span className="px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700">
                         {item.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-4 py-4 text-gray-600">
                       {item.createdAt
                         ? new Date(item.createdAt).toLocaleString()
                         : "-"}
