@@ -59,7 +59,6 @@ export const createBanner = async (req: Request, res: Response) => {
 };
 
   export const getAllBanners = async (req: Request, res: Response) => {
-    console.log("first")
     try {
       const banners = await Banner.find().sort({ position: 1 });
       return response(res, 200, "Banners fetched successfully", banners);
