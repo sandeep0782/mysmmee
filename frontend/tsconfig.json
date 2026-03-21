@@ -32,7 +32,8 @@
     "src/app/products/page.tsx",
     "src/app/products/[slug]/page",
     "src/app/products/[slug]/page",
-    "src/app/products/page."
+    "src/app/products/page.",
+    "src/app/page"
   ],
   "exclude": ["node_modules"]
 }

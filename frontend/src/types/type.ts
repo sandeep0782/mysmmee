@@ -86,6 +86,45 @@ export interface BookDetails {
   createdAt: Date;
 }
 
+export interface ProductDetails {
+  _id: string;
+  title: string;
+  slug: string;
+  images: string[];
+  subject: string;
+  articleType: ArticleType;
+  brand: Brand;
+  color: Colors;
+  season: string;
+  gender: string;
+  category: Category;
+  condition: string;
+  classType: string;
+  price: number;
+  author: string;
+  edition?: string;
+  description?: string;
+  finalPrice: number;
+  shippingCharge: string;
+  metadata?: IMetadata;
+  setDetails?: ISetDetails;
+  fashionDetails?: IFashionDetails;
+  variants: IVariant[];
+  seller: UserData;
+  paymentMode: "UPI" | "Bank Account";
+  paymentDetails: {
+    upiId?: string;
+    bankDetails?: {
+      accountNumber: string;
+      ifscCode: string;
+      bankName: string;
+    };
+  };
+  rating: number;
+  numReviews: number;
+  reviews: Review[];
+  createdAt: Date;
+}
 export interface UserData {
   name: string;
   email: string;

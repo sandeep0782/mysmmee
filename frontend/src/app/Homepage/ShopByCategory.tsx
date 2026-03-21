@@ -25,12 +25,10 @@ const ShopByCategory = () => {
   useEffect(() => {
     const updateItemsPerSlide = () => {
       let perSlide = 5;
-      if (window.innerWidth < 640) perSlide = 2; // mobile
-      else if (window.innerWidth < 1024) perSlide = 3; // tablet
-      else perSlide = 5; // desktop
+      if (window.innerWidth < 640) perSlide = 2;
+      else if (window.innerWidth < 1024) perSlide = 3;
       setItemsPerSlide(perSlide);
     };
-
     updateItemsPerSlide();
     window.addEventListener("resize", updateItemsPerSlide);
     return () => window.removeEventListener("resize", updateItemsPerSlide);
@@ -43,14 +41,12 @@ const ShopByCategory = () => {
 
   const totalSlides = Math.ceil(categories.length / itemsPerSlide);
 
-  /* ================= RESET CURRENT SLIDE IF OUT OF BOUNDS ================= */
   useEffect(() => {
     if (currentSlide >= totalSlides) {
       setCurrentSlide(totalSlides - 1 >= 0 ? totalSlides - 1 : 0);
     }
   }, [totalSlides, currentSlide]);
 
-  /* ================= AUTO SLIDE ================= */
   useEffect(() => {
     if (totalSlides <= 1) return;
     const timer = setInterval(() => {
@@ -63,19 +59,18 @@ const ShopByCategory = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % totalSlides);
 
   if (isLoading) return <BookLoader />;
-
   if (!categories.length)
     return <p className="text-center text-gray-500 py-10">No categories available</p>;
 
   return (
-    <section className="py-16 bg-red-50">
+    <section aria-label="Shop by Category" className="py-16 bg-red-50">
       <div className="w-[95%] mx-auto px-4">
         <h2 className="text-3xl font-bold mb-12 uppercase tracking-widest text-center md:text-left">
           Shop by <span className="text-primary">Category</span>
         </h2>
 
         <div className="relative">
-          {/* ================= SLIDER ================= */}
+          {/* Carousel */}
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"
@@ -99,20 +94,25 @@ const ShopByCategory = () => {
                             className="block w-full h-full"
                           >
                             {category.image ? (
-                              <div className="w-full h-full relative transform transition-transform duration-300 ease-in-out group-hover:scale-105">
+                              <div className="relative w-full h-full group">
                                 <Image
                                   src={category.image}
-                                  alt={`Cover image for ${category.name} category`}
+                                  alt={`Category: ${category.name}`}
                                   fill
-                                  className="object-cover rounded-lg"
+                                  className="object-cover rounded-lg transition-transform duration-300 ease-in-out group-hover:scale-105"
                                 />
+                                {/* Overlay category name */}
+                                <div className="absolute bottom-0 left-0 w-full bg-black/40 text-white text-center py-1 text-xs sm:text-sm">
+                                  {category.name}
+                                </div>
                               </div>
                             ) : (
                               <div className="bg-gray-200 w-full h-full flex items-center justify-center rounded-lg">
-                                <span className="text-gray-500 text-xs sm:text-sm">No Image</span>
+                                <span className="text-gray-500 text-xs sm:text-sm">
+                                  {category.name}
+                                </span>
                               </div>
                             )}
-
                           </Link>
                         </Card>
                       ))}
@@ -122,7 +122,7 @@ const ShopByCategory = () => {
             </div>
           </div>
 
-          {/* ================= NAV BUTTONS ================= */}
+          {/* Navigation */}
           {totalSlides > 1 && (
             <>
               <button
@@ -141,15 +141,15 @@ const ShopByCategory = () => {
                 <ChevronRight className="h-6 w-6" />
               </button>
 
-
-              {/* ================= DOTS ================= */}
+              {/* Dots */}
               <div className="mt-6 flex justify-center gap-2 sm:gap-3">
                 {Array.from({ length: totalSlides }).map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-3 w-3 rounded-full ${currentSlide === index ? "bg-blue-600" : "bg-gray-300"
-                      }`}
+                    className={`h-3 w-3 rounded-full ${
+                      currentSlide === index ? "bg-blue-600" : "bg-gray-300"
+                    }`}
                   />
                 ))}
               </div>

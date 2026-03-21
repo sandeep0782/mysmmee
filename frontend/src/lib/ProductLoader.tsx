@@ -1,6 +1,6 @@
 "use client";
 
-export default function BookLoader() {
+export default function ProductLoader() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-200 bg-opacity-80 backdrop-blur-md">
       <div className="flex flex-col items-center space-y-4">
@@ -11,7 +11,13 @@ export default function BookLoader() {
           className="w-24 h-24 animate-spin-slow"
         >
           <defs>
-            <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient
+              id="spinnerGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
               <stop offset="0%" stopColor="#FF156D" />
               <stop offset="100%" stopColor="#FF7D00" />
             </linearGradient>
@@ -39,8 +45,12 @@ export default function BookLoader() {
 
       <style jsx>{`
         @keyframes spin-slow {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
         .animate-spin-slow {
           animation: spin-slow 1.5s linear infinite;

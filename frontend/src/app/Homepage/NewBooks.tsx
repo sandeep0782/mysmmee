@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
@@ -16,7 +17,7 @@ const NewBooks = () => {
   // Take first 20 newest products
   useEffect(() => {
     if (apiResponse?.success) {
-      setBooks(apiResponse.data.slice(0, 20));
+      setBooks(apiResponse.data.slice(0, 10));
     }
   }, [apiResponse]);
 
