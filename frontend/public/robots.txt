@@ -2,8 +2,5 @@
 User-agent: *
 Allow: /
 
-# Host
-Host: https://mysmme.com
-
 # Sitemaps
 Sitemap: https://mysmme.com/sitemap.xml
