@@ -2,22 +2,27 @@
 import Loader from "@/lib/BookLoader";
 import AuthChecker from "@/store/Provider/AuthProvider";
 import { persistor, store } from "@/store/store";
-import { Provider } from "react-redux";
-import { PersistGate } from 'redux-persist/integration/react';
-import { Toaster } from 'react-hot-toast';
 import { usePathname } from "next/navigation";
-import Header from "./components/Header";
+import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import Footer from "./components/Footer";
-import FeaturesSection from "./components/Features";
+import Header from "./components/Header";
+import TopBar from "./components/TopBar";
 
-export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
+export default function LayoutWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
-  const isAdminRoute = pathname.startsWith("/admin")
+  const isAdminRoute = pathname.startsWith("/admin");
   return (
     <Provider store={store}>
       <PersistGate loading={<Loader />} persistor={persistor}>
         <Toaster />
         <AuthChecker>
+          <TopBar />
           {!isAdminRoute && <Header />}
           {children}
           {!isAdminRoute && <Footer />}
