@@ -1,7 +1,9 @@
+# *
 User-agent: *
-Disallow: /admin/
-Disallow: /login/
-Disallow: /cart/
-Disallow: /checkout/
+Allow: /
 
+# Host
+Host: https://mysmme.com
+
+# Sitemaps
 Sitemap: https://mysmme.com/sitemap.xml
