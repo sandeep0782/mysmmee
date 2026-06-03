@@ -2,5 +2,6 @@
 User-agent: *
 Allow: /
 
+
 # Sitemaps
 Sitemap: https://mysmme.com/sitemap.xml
