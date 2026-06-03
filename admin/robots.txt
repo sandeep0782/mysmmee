@@ -1,3 +1,0 @@
-# Admin panel robots.txt — block all crawlers
-User-agent: *
-Disallow: /
